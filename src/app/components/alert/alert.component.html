@@ -1,0 +1,7 @@
+<div *ngIf="visible" [class]="'flex items-center p-4 mb-4 rounded-lg border ' + getAlertClass()">
+  <mat-icon class="mr-2">{{getIconName()}}</mat-icon>
+  <span class="flex-1">{{message}}</span>
+  <button *ngIf="dismissible" mat-icon-button (click)="dismiss()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>

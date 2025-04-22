@@ -1,0 +1,22 @@
+<div class="space-y-6">
+  <div *ngFor="let activity of activities; let i = index; let last = last" 
+       class="relative pl-6" 
+       [class.before:absolute]="!last" 
+       [class.before:left-0]="!last" 
+       [class.before:top-2]="!last" 
+       [class.before:h-full]="!last" 
+       [class.before:w-0.5]="!last" 
+       [class.before:bg-purple-100]="!last">
+    <div class="absolute left-0 top-2 h-4 w-4 rounded-full" [class]="getIconColor(activity.type) + ' -translate-x-1.5'"></div>
+    <div class="mb-1 text-sm font-medium">{{activity.title}}</div>
+    <div class="text-sm text-slate-600">{{activity.description}}</div>
+    <div class="mt-1 text-xs text-slate-500">{{activity.timestamp}}</div>
+  </div>
+</div>
+
+<div *ngIf="showViewAll" class="mt-4">
+  <button mat-stroked-button class="w-full gap-1">
+    View All Activity
+    <mat-icon>chevron_right</mat-icon>
+  </button>
+</div>

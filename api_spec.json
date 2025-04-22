@@ -1,0 +1,190 @@
+[
+  {
+    "//": "projects",
+    "method": "GET",
+    "url": "/projects",
+    "body": null,
+    "returns": [
+      {
+        "id": "number",
+        "title": "string",
+        "description": "string",
+        "status": "string",
+        "priority": "string",
+        "startDate": "datetime",
+        "dueDate": "datetime",
+        "teamMembers": [
+          "string"
+        ],
+        "tags": [
+          "string"
+        ],
+        "budget": {
+          "allocated": "number",
+          "currency": "string"
+        },
+        "clientId": "string"
+      }
+    ]
+  },
+  {
+    "//": "projects",
+    "method": "POST",
+    "url": "/projects",
+    "body": {
+      "title": "string",
+      "description": "string",
+      "status": "string",
+      "priority": "string",
+      "startDate": "datetime",
+      "dueDate": "datetime",
+      "teamMembers": [
+        "string"
+      ],
+      "tags": [
+        "string"
+      ],
+      "budget": {
+        "allocated": "number",
+        "currency": "string"
+      },
+      "clientId": "string"
+    },
+    "returns": {
+      "message": "string",
+      "data": "object (project)"
+    }
+  },
+  {
+    "//": "tasks",
+    "method": "GET",
+    "url": "/projects/{projectId}/tasks",
+    "body": null,
+    "returns": [
+      {
+        "id": "number",
+        "title": "string",
+        "description": "string",
+        "status": "string",
+        "priority": "string",
+        "startDate": "datetime",
+        "dueDate": "datetime",
+        "estimatedHours": "number",
+        "assignedTo": "string",
+        "subtasks": [
+          {
+            "title": "string",
+            "completed": "boolean"
+          }
+        ],
+        "tags": [
+          "string"
+        ]
+      }
+    ]
+  },
+  {
+    "//": "tasks",
+    "method": "PUT",
+    "url": "/tasks/{taskId}",
+    "body": {
+      "title": "string",
+      "description": "string",
+      "status": "string",
+      "priority": "string",
+      "dueDate": "datetime",
+      "assignedTo": "string",
+      "subtasks": [
+        {
+          "id": "string (optional)",
+          "title": "string",
+          "completed": "boolean"
+        }
+      ]
+    }
+  },
+  {
+    "//": "time_entries",
+    "method": "GET",
+    "url": "/time-entries?projectId={projectId}",
+    "body": null,
+    "returns": [
+      {
+        "id": "number",
+        "taskId": "string",
+        "projectId": "string",
+        "description": "string",
+        "startTime": "datetime",
+        "endTime": "datetime",
+        "billable": "boolean"
+      }
+    ]
+  },
+  {
+    "//": "time_entries",
+    "method": "POST",
+    "url": "/time-entries",
+    "body": {
+      "taskId": "string",
+      "projectId": "string",
+      "description": "string",
+      "startTime": "datetime",
+      "endTime": "datetime",
+      "billable": "boolean"
+    }
+
+  },
+
+  {
+    "response": [
+      {
+        "status": 200,
+        "description": "OK - The request was successful.",
+        "body": {}
+      },
+      {
+        "status": 201,
+        "description": "Created - The resource was successfully created.",
+        "body": {
+          "message": "string (Resource created successfully)",
+          "data": "object"
+        }
+      },
+      {
+        "status": 400,
+        "description": "Bad Request - The request was invalid or cannot be served.",
+        "body": {
+          "error": "string (Validation error or bad input)"
+        }
+      },
+      {
+        "status": 401,
+        "description": "Unauthorized - Authentication failed or not provided.",
+        "body": {
+          "error": "string (Unauthorized access)"
+        }
+      },
+      {
+        "status": 403,
+        "description": "Forbidden - The user does not have access rights.",
+        "body": {
+          "error": "string (Access denied)"
+        }
+      },
+      {
+        "status": 404,
+        "description": "Not Found - The resource does not exist.",
+        "body": {
+          "error": "string (Resource not found)"
+        }
+      },
+      {
+        "status": 500,
+        "description": "Internal Server Error - Unexpected server-side issue.",
+        "body": {
+          "error": "string (Server error occurred)"
+        }
+      }
+    ]
+  }
+]

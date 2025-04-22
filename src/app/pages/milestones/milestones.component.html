@@ -1,0 +1,236 @@
+<div class="py-8">
+  <div class="container mx-auto px-4">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h1 class="text-3xl font-bold mb-2">Milestones</h1>
+        <p class="text-slate-600">Track and manage all project milestones</p>
+      </div>
+      
+      <!-- Dropdown for selecting a project -->
+      <div class="ml-4">
+        <label for="projectSelect" class="block mb-1 text-sm font-medium text-gray-700">For project:</label>
+        <select
+          id="projectSelect"
+          [(ngModel)]="selectedProjectId"
+          (change)="onProjectChange($event)"
+          class="block w-full mt-1 p-2 border border-gray-300 rounded"
+        >
+          <option *ngFor="let project of allProjects" [value]="project.id">
+            {{ project.title}}
+          </option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="mb-8 overflow-x-hidden ">
+      <mat-tab-group animationDuration="0ms" class="milestone-tabs ">
+        <!-- All Milestones Tab -->
+        <mat-tab label="All Milestones">
+  
+          <div class="space-y-6 my-6">
+            <mat-card *ngFor="let milestone of allMilestones" class="overflow-hidden border-0 shadow-md hover:shadow-lg transition-all">
+              <div class="h-2 w-full bg-gradient-to-r from-purple-500 to-indigo-500"></div>
+              <mat-card-content class="p-6">
+                <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
+                  <div>
+                    <div class="flex items-center gap-2 mb-1">
+                      <h3 class="font-bold text-xl">{{ milestone.name }}</h3>
+                      <mat-chip [class]="getStatusColorClass(milestone.status)">{{ milestone.status }}</mat-chip>
+                    </div>
+                    <p class="text-slate-600 text-sm">{{ milestone.description }}</p>
+                    <div class="flex items-center gap-2 mt-2">
+                      <mat-chip variant="outlined" class="bg-white">
+                        <a [routerLink]="['/projects', milestone.researchProject.id]" class="hover:text-purple-600 transition-colors">
+                          {{ milestone.researchProject.title }}
+                        </a>
+                      </mat-chip>
+                    </div>
+                  </div>
+
+                  <button
+                  mat-stroked-button
+                  class="gap-1"
+                  [routerLink]="['/deliverables',milestone.id]"
+                >
+                  View Deliverables
+                  <mat-icon>arrow_right_alt</mat-icon>
+                </button>
+                <button
+                mat-stroked-button
+                class="gap-1"
+                [routerLink]="['/milestones', milestone.id, 'tasks']"
+              >
+                View Tasks
+                <mat-icon>arrow_right_alt</mat-icon>
+              </button>
+              
+                </div>
+
+                <!-- Tasks -->
+                <div class="mt-4">
+                  <h4 class="font-medium text-lg mb-2">Tasks</h4>
+                  <div *ngFor="let task of milestone.tasks" class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+                    <div class="flex items-center gap-2">
+                      <mat-icon class="h-4 w-4 text-purple-600">check_circle</mat-icon>
+                      <span>{{ task.name }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <mat-chip [class]="getStatusColorClass(task.status)">{{ task.status }}</mat-chip>
+                      <span>Assigned to: {{ task.assignedTo.firstName }} {{ task.assignedTo.lastName }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Deliverables -->
+                <div class="mt-4">
+                  <h4 class="font-medium text-lg mb-2">Deliverables</h4>
+                  <div *ngFor="let deliverable of milestone.deliverables" class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+                    <div class="flex items-center gap-2">
+                      <mat-icon class="h-4 w-4 text-purple-600">description</mat-icon>
+                      <span>{{ deliverable.name }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span>Reviewed: {{ deliverable.reviewed }}</span>
+                    </div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-tab>
+
+        <!-- Pending Approval Tab -->
+        <mat-tab label="Pending Approval" >
+     
+          <div class="space-y-6 my-6">
+            <mat-card *ngFor="let milestone of pendingMilestones" class="overflow-hidden border-0 shadow-md hover:shadow-lg transition-all">
+              <div class="h-2 w-full bg-gradient-to-r from-purple-500 to-indigo-500"></div>
+              <mat-card-content class="p-6">
+                <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
+                  <div>
+                    <div class="flex items-center gap-2 mb-1">
+                      <h3 class="font-bold text-xl">{{ milestone.name }}</h3>
+                      <mat-chip [class]="getStatusColorClass(milestone.status)">{{ milestone.status }}</mat-chip>
+                    </div>
+                    <p class="text-slate-600 text-sm">{{ milestone.description }}</p>
+                    <div class="flex items-center gap-2 mt-2">
+                      <mat-chip variant="outlined" class="bg-white">
+                        <a [routerLink]="['/projects', milestone.researchProject.id]" class="hover:text-purple-600 transition-colors">
+                          {{ milestone.researchProject.title }}
+                        </a>
+                      </mat-chip>
+                    </div>
+                  </div>
+
+                  <div class="flex gap-2">
+                    <button mat-stroked-button class="gap-1">
+                      View Details
+                      <mat-icon>arrow_right_alt</mat-icon>
+                    </button>
+                    <button mat-flat-button color="primary" class="bg-gradient-to-r from-purple-600 to-indigo-600">
+                      Approve
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Tasks -->
+                <div class="mt-4">
+                  <h4 class="font-medium text-lg mb-2">Tasks</h4>
+                  <div *ngFor="let task of milestone.tasks" class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+                    <div class="flex items-center gap-2">
+                      <mat-icon class="h-4 w-4 text-purple-600">check_circle</mat-icon>
+                      <span>{{ task.name }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <mat-chip [class]="getStatusColorClass(task.status)">{{ task.status }}</mat-chip>
+                      <span>Assigned to: {{ task.assignedTo.firstName }} {{ task.assignedTo.lastName }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Deliverables -->
+                <div class="mt-4">
+                  <h4 class="font-medium text-lg mb-2">Deliverables</h4>
+                  <div *ngFor="let deliverable of milestone.deliverables" class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+                    <div class="flex items-center gap-2">
+                      <mat-icon class="h-4 w-4 text-purple-600">description</mat-icon>
+                      <span>{{ deliverable.name }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span>Reviewed: {{ deliverable.reviewed }}</span>
+                    </div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-tab>
+
+        <!-- Approved Tab -->
+        <mat-tab label="Approved">
+     
+          <div class="space-y-6 my-6">
+            <mat-card *ngFor="let milestone of approvedMilestones" class="overflow-hidden border-0 shadow-md hover:shadow-lg transition-all">
+              <div class="h-2 w-full bg-gradient-to-r from-purple-500 to-indigo-500"></div>
+              <mat-card-content class="p-6">
+                <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
+                  <div>
+                    <div class="flex items-center gap-2 mb-1">
+                      <h3 class="font-bold text-xl">{{ milestone.name }}</h3>
+                      <mat-chip [class]="getStatusColorClass(milestone.status)">{{ milestone.status }}</mat-chip>
+                      <mat-chip class="bg-emerald-100 text-emerald-700 border-emerald-200">Approved</mat-chip>
+                    </div>
+                    <p class="text-slate-600 text-sm">{{ milestone.description }}</p>
+                    <div class="flex items-center gap-2 mt-2">
+                      <mat-chip variant="outlined" class="bg-white">
+                        <a [routerLink]="['/projects', milestone.researchProject.id]" class="hover:text-purple-600 transition-colors">
+                          {{ milestone.researchProject.title }}
+                        </a>
+                      </mat-chip>
+                    </div>
+                  </div>
+
+                  <button mat-stroked-button class="gap-1">
+                    View Details
+                    <mat-icon>arrow_right_alt</mat-icon>
+                  </button>
+                </div>
+
+                <!-- Tasks -->
+                <div class="mt-4">
+                  <h4 class="font-medium text-lg mb-2">Tasks</h4>
+                  <div *ngFor="let task of milestone.tasks" class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+                    <div class="flex items-center gap-2">
+                      <mat-icon class="h-4 w-4 text-purple-600">check_circle</mat-icon>
+                      <span>{{ task.name }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <mat-chip [class]="getStatusColorClass(task.status)">{{ task.status }}</mat-chip>
+                      <span>Assigned to: {{ task.assignedTo.firstName }} {{ task.assignedTo.lastName }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Deliverables -->
+                <div class="mt-4">
+                  <h4 class="font-medium text-lg mb-2">Deliverables</h4>
+                  <div *ngFor="let deliverable of milestone.deliverables" class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+                    <div class="flex items-center gap-2">
+                      <mat-icon class="h-4 w-4 text-purple-600">description</mat-icon>
+                      <span>{{ deliverable.name }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span>Reviewed: {{ deliverable.reviewed }}</span>
+                    </div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+
+
+    </div>
+  </div>
+</div>

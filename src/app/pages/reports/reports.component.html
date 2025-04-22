@@ -1,0 +1,286 @@
+<div class="py-8">
+  <div class="container mx-auto px-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+      <div>
+        <h1 class="text-3xl font-bold mb-2">Reports & Documents</h1>
+        <p class="text-slate-600">Access project reports, analytics, and contracts</p>
+      </div>
+      <button mat-flat-button color="primary" class="bg-gradient-to-r from-purple-600 to-indigo-600 gap-2">
+        <mat-icon>description</mat-icon>
+        Generate New Report
+      </button>
+    </div>
+
+    <div class="grid gap-8 lg:grid-cols-3 mb-12">
+      <mat-card class="border-0 shadow-md">
+        <mat-card-header>
+          <mat-card-title class="flex items-center gap-2">
+            <mat-icon class="text-purple-600">bar_chart</mat-icon>
+            Project Progress
+          </mat-card-title>
+          <mat-card-subtitle>Overall progress across all projects</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content class="p-6">
+          <div class="space-y-4">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-sm">
+                <span>Website Redesign</span>
+                <span class="font-medium">75%</span>
+              </div>
+              <mat-progress-bar mode="determinate" value="75" color="primary" class="h-2 rounded-full"></mat-progress-bar>
+            </div>
+
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-sm">
+                <span>Mobile App Development</span>
+                <span class="font-medium">45%</span>
+              </div>
+              <mat-progress-bar mode="determinate" value="45" color="accent" class="h-2 rounded-full"></mat-progress-bar>
+            </div>
+
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-sm">
+                <span>Marketing Campaign</span>
+                <span class="font-medium">30%</span>
+              </div>
+              <mat-progress-bar mode="determinate" value="30" color="warn" class="h-2 rounded-full"></mat-progress-bar>
+            </div>
+
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-sm">
+                <span>Data Migration</span>
+                <span class="font-medium">90%</span>
+              </div>
+              <mat-progress-bar mode="determinate" value="90" color="primary" class="h-2 rounded-full"></mat-progress-bar>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="border-0 shadow-md">
+        <mat-card-header>
+          <mat-card-title class="flex items-center gap-2">
+            <mat-icon class="text-purple-600">pie_chart</mat-icon>
+            Budget Allocation
+          </mat-card-title>
+          <mat-card-subtitle>Budget distribution across projects</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content class="p-6">
+          <div class="flex items-center justify-center h-[180px]">
+            <div class="relative h-40 w-40 rounded-full border-8 border-slate-100 flex items-center justify-center">
+              <div class="absolute inset-0 h-full w-full rounded-full overflow-hidden">
+                <div class="absolute top-0 left-0 h-1/2 w-1/2 bg-purple-500"></div>
+                <div class="absolute top-0 right-0 h-1/2 w-1/2 bg-emerald-500"></div>
+                <div class="absolute bottom-0 left-0 h-1/2 w-1/2 bg-amber-500"></div>
+                <div class="absolute bottom-0 right-0 h-1/2 w-1/2 bg-sky-500"></div>
+              </div>
+              <div class="h-20 w-20 rounded-full bg-white flex items-center justify-center text-lg font-bold">
+                $120.5K
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 mt-4">
+            <div class="flex items-center gap-2">
+              <div class="h-3 w-3 rounded-full bg-purple-500"></div>
+              <span class="text-sm">Website (21%)</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="h-3 w-3 rounded-full bg-emerald-500"></div>
+              <span class="text-sm">Mobile App (37%)</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="h-3 w-3 rounded-full bg-amber-500"></div>
+              <span class="text-sm">Marketing (15%)</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="h-3 w-3 rounded-full bg-sky-500"></div>
+              <span class="text-sm">Data (27%)</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="border-0 shadow-md">
+        <mat-card-header>
+          <mat-card-title class="flex items-center gap-2">
+            <mat-icon class="text-purple-600">calendar_today</mat-icon>
+            Timeline Overview
+          </mat-card-title>
+          <mat-card-subtitle>Project timelines and deadlines</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content class="p-6">
+          <div class="space-y-4">
+            <div class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50">
+              <div class="h-10 w-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center">
+                <mat-icon>schedule</mat-icon>
+              </div>
+              <div>
+                <p class="font-medium">Data Migration</p>
+                <p class="text-sm text-slate-500">Due in 3 weeks</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50">
+              <div class="h-10 w-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center">
+                <mat-icon>schedule</mat-icon>
+              </div>
+              <div>
+                <p class="font-medium">Marketing Campaign</p>
+                <p class="text-sm text-slate-500">Due in 8 weeks</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50">
+              <div class="h-10 w-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                <mat-icon>schedule</mat-icon>
+              </div>
+              <div>
+                <p class="font-medium">Mobile App Development</p>
+                <p class="text-sm text-slate-500">Due in 15 weeks</p>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="mb-8">
+      <mat-tab-group animationDuration="0ms" class="report-tabs">
+        <mat-tab label="Reports">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 my-6">
+            <mat-form-field appearance="outline" class="w-full sm:w-[180px]">
+              <mat-label>
+                <div class="flex items-center gap-2">
+                  <mat-icon class="text-slate-400">filter_list</mat-icon>
+                  <span>Filter by</span>
+                </div>
+              </mat-label>
+              <mat-select>
+                <mat-option value="all">All Projects</mat-option>
+                <mat-option value="recent">Recently Added</mat-option>
+                <mat-option value="type">Document Type</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <mat-card *ngFor="let report of reports" class="overflow-hidden h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border-0 shadow-md">
+              <div [class]="'h-2 w-full bg-gradient-to-r ' + report.project.color"></div>
+              <mat-card-content class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 class="font-bold text-lg mb-1">{{report.title}}</h3>
+                    <p class="text-slate-600 text-sm">{{report.description}}</p>
+                  </div>
+                  <mat-chip class="bg-purple-100 text-purple-700">{{report.type}}</mat-chip>
+                </div>
+
+                <div class="space-y-4">
+                  <div class="flex items-center justify-between text-sm">
+                    <div class="flex items-center gap-1.5">
+                      <mat-icon class="h-4 w-4 text-purple-600">calendar_today</mat-icon>
+                      <span>{{report.date | date}}</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <mat-icon class="h-4 w-4 text-purple-600">description</mat-icon>
+                      <span>
+                        {{report.format}} • {{report.size}}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center justify-between">
+                    <mat-chip variant="outlined" class="bg-white">
+                      <a [routerLink]="['/projects', report.project.id]" class="hover:text-purple-600 transition-colors">
+                        {{report.project.name}}
+                      </a>
+                    </mat-chip>
+
+                    <button mat-stroked-button class="gap-1">
+                      <mat-icon>download</mat-icon>
+                      Download
+                    </button>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Contracts">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 my-6">
+            <mat-form-field appearance="outline" class="w-full sm:w-[180px]">
+              <mat-label>
+                <div class="flex items-center gap-2">
+                  <mat-icon class="text-slate-400">filter_list</mat-icon>
+                  <span>Filter by</span>
+                </div>
+              </mat-label>
+              <mat-select>
+                <mat-option value="all">All Projects</mat-option>
+                <mat-option value="recent">Recently Added</mat-option>
+                <mat-option value="client">Client</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="grid gap-6 md:grid-cols-2">
+            <mat-card *ngFor="let contract of contracts" class="overflow-hidden h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border-0 shadow-md">
+              <div [class]="'h-2 w-full bg-gradient-to-r ' + contract.project.color"></div>
+              <mat-card-content class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 class="font-bold text-lg mb-1">{{contract.title}}</h3>
+                    <p class="text-slate-600 text-sm">{{contract.description}}</p>
+                  </div>
+                  <mat-chip class="bg-emerald-100 text-emerald-700">{{contract.status}}</mat-chip>
+                </div>
+
+                <div class="space-y-4">
+                  <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                      <p class="text-xs text-slate-500">Client</p>
+                      <p class="font-medium">{{contract.client}}</p>
+                    </div>
+                    <div class="space-y-1">
+                      <p class="text-xs text-slate-500">Contract Value</p>
+                      <p class="font-medium">{{contract.value}}</p>
+                    </div>
+                    <div class="space-y-1">
+                      <p class="text-xs text-slate-500">Signed Date</p>
+                      <p class="font-medium">{{contract.date | date}}</p>
+                    </div>
+                    <div class="space-y-1">
+                      <p class="text-xs text-slate-500">End Date</p>
+                      <p class="font-medium">{{contract.endDate | date}}</p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center justify-between">
+                    <mat-chip variant="outlined" class="bg-white">
+                      <a [routerLink]="['/projects', contract.project.id]" class="hover:text-purple-600 transition-colors">
+                        {{contract.project.name}}
+                      </a>
+                    </mat-chip>
+
+                    <div class="flex gap-2">
+                      <button mat-stroked-button class="gap-1">
+                        <mat-icon>description</mat-icon>
+                        View
+                      </button>
+                      <button mat-stroked-button class="gap-1">
+                        <mat-icon>download</mat-icon>
+                        Download
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </div>
+</div>

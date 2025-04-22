@@ -1,0 +1,42 @@
+<mat-card class="overflow-hidden h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border-0 shadow-md">
+  <mat-card-content class="p-6">
+    <div class="flex justify-between items-start mb-4">
+      <h3 class="font-bold text-xl group-hover:text-purple-600 transition-colors">{{ project.title }}</h3>
+      <mat-chip [class]="getBadgeColorClass()">
+        {{ calculateProgress() }}% Complete
+      </mat-chip>
+    </div>
+
+    <p class="text-slate-600 text-sm mb-6">{{ project.description }}</p>
+
+    <div class="space-y-4">
+      <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+        <div [class]="'h-full rounded-full ' + getProgressColorClass()" [style.width.%]="calculateProgress()"></div>
+      </div>
+
+      <div class="flex items-center justify-between text-sm">
+        <div class="flex items-center gap-1.5">
+          <mat-icon class="h-4 w-4 text-purple-600">check_circle</mat-icon>
+          <span class="font-medium">{{ getCompletedMilestonesCount() }}/{{ project.milestones.length }} milestones</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <mat-icon class="h-4 w-4 text-purple-600">schedule</mat-icon>
+          <span>Due {{ project.endDate | date }}</span>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <div class="flex -space-x-2">
+          <div *ngFor="let member of project.members; let i = index" class="h-8 w-8 rounded-full border-2 border-white overflow-hidden">
+            <img [src]="" [alt]="'Team member ' + (i+1)" class="h-full w-full object-cover">
+          </div>
+        </div>
+
+        <button mat-button color="primary" class="gap-1 text-purple-600 group-hover:bg-purple-50">
+          View Details
+          <mat-icon>arrow_right_alt</mat-icon>
+        </button>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

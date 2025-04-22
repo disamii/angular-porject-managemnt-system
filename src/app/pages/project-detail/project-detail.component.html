@@ -1,0 +1,222 @@
+<div class="py-8">
+  <div class="container mx-auto px-4">
+    <button mat-button class="mb-6 gap-1 group" routerLink="/projects">
+      <mat-icon class="group-hover:text-purple-600">arrow_back</mat-icon>
+      <span class="group-hover:text-purple-600">Back to Projects</span>
+    </button>
+
+    <ng-container *ngIf="loading">
+      <app-loading-spinner message="Loading project details..."></app-loading-spinner>
+    </ng-container>
+
+    <ng-container *ngIf="error">
+      <app-alert type="error" message="Failed to load project. Please try again later." [dismissible]="false"></app-alert>
+    </ng-container>
+
+    <ng-container *ngIf="!loading && !error && project">
+      <div class="mb-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <div>
+            <h1 class="text-3xl font-bold mb-2">{{ project.title }}</h1>
+            <p class="text-slate-600">{{ project.description }}</p>
+          </div>
+          <div class="flex gap-3">
+            <button mat-stroked-button class="gap-1">
+              <mat-icon>description</mat-icon>
+              Export
+            </button>
+            <button mat-flat-button color="primary" class="gap-1 bg-gradient-to-r from-purple-600 to-indigo-600">
+              <mat-icon>task_alt</mat-icon>
+              Share
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <mat-card class="border-0 shadow-sm hover:shadow-md transition-shadow">
+            <mat-card-content class="p-6 flex items-center gap-4">
+              <div class="h-12 w-12 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center">
+                <mat-icon>check_circle</mat-icon>
+              </div>
+              <div>
+                <p class="text-sm text-slate-500">Progress</p>
+                <p class="text-2xl font-bold">{{ calculateProgress() }}%</p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="border-0 shadow-sm hover:shadow-md transition-shadow">
+            <mat-card-content class="p-6 flex items-center gap-4">
+              <div class="h-12 w-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                <mat-icon>calendar_today</mat-icon>
+              </div>
+              <div>
+                <p class="text-sm text-slate-500">Due Date</p>
+                <p class="text-2xl font-bold">{{ project.endDate | date:'MMM d' }}</p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="border-0 shadow-sm hover:shadow-md transition-shadow">
+            <mat-card-content class="p-6 flex items-center gap-4">
+              <div class="h-12 w-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center">
+                <mat-icon>error</mat-icon>
+              </div>
+              <div>
+                <p class="text-sm text-slate-500">Status</p>
+                <p class="text-2xl font-bold">{{ getProjectStatus() }}</p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="border-0 shadow-sm hover:shadow-md transition-shadow">
+            <mat-card-content class="p-6 flex items-center gap-4">
+              <div class="h-12 w-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                <mat-icon>people</mat-icon>
+              </div>
+              <div>
+                <p class="text-sm text-slate-500">Team</p>
+                <p class="text-2xl font-bold">{{ project.members.length }} Members</p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+
+      <div class="grid gap-8 lg:grid-cols-3">
+        <div class="lg:col-span-2">
+          <mat-tab-group animationDuration="2ms" [selectedIndex]="selectedIndex" (selectedTabChange)="setActiveTab($event.tab.textLabel.toLowerCase())">
+            <mat-tab label="Overview">
+              <mat-card class="border-0 shadow-md">
+                <mat-card-header>
+                  <mat-card-title>Project Details</mat-card-title>
+                </mat-card-header>
+                <mat-card-content class="space-y-8 p-6">
+                  <div class="space-y-4">
+                    <h3 class="font-medium text-lg">Progress Overview</h3>
+                    <app-project-progress [progress]="calculateProgress()" label="Overall Completion"></app-project-progress>
+
+                    <div class="grid gap-4 sm:grid-cols-2">
+                      <div class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50">
+                        <mat-icon class="text-purple-600">calendar_today</mat-icon>
+                        <div>
+                          <p class="text-sm text-slate-500">Start Date</p>
+                          <p class="font-medium">{{ project.startDate | date }}</p>
+                        </div>
+                      </div>
+
+                      <div class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50">
+                        <mat-icon class="text-purple-600">schedule</mat-icon>
+                        <div>
+                          <p class="text-sm text-slate-500">Due Date</p>
+                          <p class="font-medium">{{ project.endDate | date }}</p>
+                        </div>
+                      </div>
+
+                      <div class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50">
+                        <mat-icon class="text-purple-600">people</mat-icon>
+                        <div>
+                          <p class="text-sm text-slate-500">Principal Investigator</p>
+                          <p class="font-medium">{{ project.principalInvestigator.firstName }} {{ project.principalInvestigator.lastName }}</p>
+                        </div>
+                      </div>
+
+                      <div class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50">
+                        <mat-icon class="text-purple-600">description</mat-icon>
+                        <div>
+                          <p class="text-sm text-slate-500">Budget</p>
+                          <p class="font-medium">{{ project.allowedBudget || 'N/A' }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="space-y-4">
+                    <h3 class="font-medium text-lg">Team Members</h3>
+                    <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+                      <app-team-member *ngFor="let member of project.members"
+                                        
+                                        [name]="member.firstName + ' ' + member.lastName"
+                                        [role]="'Team Member'">
+                      </app-team-member>
+                    </div>
+                  </div>
+
+                  <div class="space-y-4">
+                    <h3 class="font-medium text-lg">Milestone Summary</h3>
+                    <div class="flex items-center justify-between p-4 rounded-lg bg-slate-50 border border-slate-200">
+                      <div class="flex items-center gap-3">
+                        <div class="h-10 w-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center">
+                          <mat-icon>check_circle</mat-icon>
+                        </div>
+                        <div>
+                          <p class="font-medium">Milestone Progress</p>
+                          <p class="text-sm text-slate-500">
+                            {{ getCompletedMilestonesCount() }} of {{ project.milestones.length }} milestones completed
+                          </p>
+                        </div>
+                      </div>
+                      <button mat-stroked-button class="gap-1" (click)="setActiveTab('milestones')">
+                        View All
+                        <mat-icon>chevron_right</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </mat-tab>
+
+            <mat-tab label="Milestones">
+              <mat-card class="border-0 shadow-md">
+                <mat-card-header>
+                  <mat-card-title>Project Milestones</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <app-milestone-timeline [milestones]="project.milestones"></app-milestone-timeline>
+                </mat-card-content>
+              </mat-card>
+            </mat-tab>
+
+            <mat-tab label="Add Milestone">
+              <mat-card class="border-0 shadow-md">
+                <mat-card-header>
+                  <mat-card-title>Add New Milestone</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <app-milestone-form [projectId]="projectId"></app-milestone-form>
+                </mat-card-content>
+              </mat-card>
+            </mat-tab>
+          </mat-tab-group>
+        </div>
+
+        <div>
+          <mat-card class="border-0 shadow-md">
+            <mat-card-header>
+              <mat-card-title>Recent Activity</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <app-activity-feed [activities]="recentActivities"></app-activity-feed>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="border-0 shadow-md mt-6">
+            <mat-card-header>
+              <mat-card-title>Quick Actions</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="space-y-4 p-6">
+              <button mat-stroked-button class="w-full justify-start gap-2">
+                <mat-icon>upload</mat-icon>
+                Upload delivarable
+              </button>
+              <button mat-stroked-button class="w-full justify-start gap-2">
+                <mat-icon>people</mat-icon>
+                Invite Team Member
+              </button>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

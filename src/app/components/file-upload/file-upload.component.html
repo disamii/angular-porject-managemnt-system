@@ -1,0 +1,45 @@
+<div class="space-y-4">
+  <div class="border-2 border-dashed border-slate-200 rounded-lg p-6 text-center">
+    <input
+      type="file"
+      id="file-upload-{{label}}"
+      (change)="onFileSelected($event)"
+      class="hidden"
+      [multiple]="multiple"
+      [accept]="accept"
+    >
+    <label for="file-upload-{{label}}" class="cursor-pointer">
+      <div class="flex flex-col items-center gap-2">
+        <div class="h-12 w-12 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center">
+          <mat-icon>{{icon}}</mat-icon>
+        </div>
+        <p class="font-medium">{{label}}</p>
+        <p class="text-sm text-slate-500">{{description}}</p>
+      </div>
+    </label>
+  </div>
+
+  <div *ngIf="files.length > 0" class="space-y-2">
+    <div class="flex items-center justify-between">
+      <label class="block text-sm font-medium">Uploaded Files</label>
+      <button mat-button color="warn" (click)="clearFiles()" *ngIf="files.length > 1">Clear All</button>
+    </div>
+    <div class="space-y-2">
+      <div *ngFor="let file of files; let i = index" class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200">
+        <div class="flex items-center gap-2">
+          <mat-icon class="h-4 w-4 text-purple-600">description</mat-icon>
+          <span class="text-sm font-medium">{{file.name}}</span>
+          <span class="text-xs text-slate-500">({{(file.size / 1024 / 1024).toFixed(2)}} MB)</span>
+        </div>
+        <button
+          mat-icon-button
+          type="button"
+          (click)="removeFile(i)"
+          class="h-8 w-8 p-0 text-slate-500 hover:text-slate-700"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

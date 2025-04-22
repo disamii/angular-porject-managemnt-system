@@ -1,0 +1,9 @@
+<div class="space-y-2">
+  <div class="flex items-center justify-between text-sm">
+    <span>{{label}}</span>
+    <span *ngIf="showPercentage" class="font-medium">{{progress}}%</span>
+  </div>
+  <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+    <div [class]="'h-full rounded-full ' + getProgressColorClass()" [style.width.%]="progress"></div>
+  </div>
+</div>

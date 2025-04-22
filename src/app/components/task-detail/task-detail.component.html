@@ -1,0 +1,112 @@
+<div class="container mx-auto px-4 py-8 max-w-3xl">
+    <button mat-button (click)="navigateToTaskList()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Tasks
+    </button>
+  
+    <div *ngIf="loading" class="flex flex-col items-center justify-center py-12">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p class="mt-4 text-gray-600">Loading task details...</p>
+    </div>
+  
+    <div *ngIf="error" class="flex flex-col items-center justify-center py-12 text-red-500">
+      <mat-icon color="warn" class="text-5xl">error</mat-icon>
+      <p class="mt-2">{{error}}</p>
+      <button mat-button color="primary" (click)="loadTask()">Try Again</button>
+    </div>
+  
+    <mat-card *ngIf="!loading && !error && task" class="task-detail-card mt-4">
+      <mat-card-header>
+        <mat-card-title>{{task.name}}</mat-card-title>
+        <mat-card-subtitle>Task #{{task.id}}</mat-card-subtitle>
+        <span class="status-badge" [ngClass]="getStatusClass(task.status)">
+          {{task.status.replace('_', ' ')}}
+        </span>
+      </mat-card-header>
+      <mat-card-content>
+        <section class="detail-section">
+          <h3>Description</h3>
+          <p>{{task.description || 'No description provided.'}}</p>
+        </section>
+  
+        <div class="detail-grid">
+          <section class="detail-section">
+            <h3>Milestone</h3>
+            <p>{{task.milestone.name || 'Milestone #' + milestoneId}}</p>
+          </section>
+  
+          <section class="detail-section">
+            <h3>Assigned To</h3>
+            <p *ngIf="task.assignedTo">
+              {{task.assignedTo.firstName}} {{task.assignedTo.lastName}}
+              <span class="email">({{task.assignedTo.email}})</span>
+            </p>
+            <p *ngIf="!task.assignedTo">Unassigned</p>
+          </section>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="navigateToEditTask()">
+          <mat-icon>edit</mat-icon>
+          Edit Task
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+  
+  <style>
+    .back-button {
+      margin-bottom: 16px;
+    }
+    
+    .status-badge {
+      padding: 4px 8px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-left: auto;
+    }
+    
+    .status-not-started {
+      background-color: #f5f5f5;
+      color: #616161;
+    }
+    
+    .status-in-progress {
+      background-color: #e3f2fd;
+      color: #1976d2;
+    }
+    
+    .status-completed {
+      background-color: #e8f5e9;
+      color: #388e3c;
+    }
+    
+    .detail-section {
+      margin-bottom: 24px;
+    }
+    
+    .detail-section h3 {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: rgba(0, 0, 0, 0.7);
+    }
+    
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    
+    @media (max-width: 600px) {
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .email {
+      color: rgba(0, 0, 0, 0.6);
+    }
+  </style>
+  

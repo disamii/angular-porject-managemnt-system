@@ -1,0 +1,22 @@
+<div class="py-8">
+  <div class="container mx-auto px-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+      <div>
+        <h1 class="text-3xl font-bold mb-2">Projects</h1>
+        <p class="text-slate-600">Manage and track all your company projects</p>
+      </div>
+      <button mat-flat-button class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white"
+        [routerLink]="'/projects/new'">
+        <mat-icon>add</mat-icon>
+        Create New Project
+      </button>
+
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <a *ngFor="let project of allProjects" [routerLink]="['/projects', project.id]" class="group">
+        <app-project-card [project]="project"></app-project-card>
+      </a>
+    </div>
+  </div>
+</div>

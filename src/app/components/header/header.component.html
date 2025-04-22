@@ -1,0 +1,97 @@
+<header class="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur shadow-sm dark:bg-gray-900/80 dark:border-gray-800">
+  <mat-toolbar class="container mx-auto px-4 h-16">
+    <a routerLink="/" class="flex items-center gap-2 font-bold text-xl">
+      <div class="flex h-8 w-8 items-center justify-center rounded-md bg-gradient-to-r from-purple-600 to-indigo-600 text-white">
+        <mat-icon>bar_chart</mat-icon>
+      </div>
+      <span class="dark:text-white">BDU ProjectPro</span>
+    </a>
+    
+    <div class="hidden md:flex mx-auto gap-6">
+      <a routerLink="/" 
+         [class.text-purple-600]="isActive('/')"
+         [class.after:absolute]="isActive('/')"
+         [class.after:bottom-0]="isActive('/')"
+         [class.after:left-0]="isActive('/')"
+         [class.after:right-0]="isActive('/')"
+         [class.after:h-0.5]="isActive('/')"
+         [class.after:bg-purple-600]="isActive('/')"
+         class="relative text-sm font-medium hover:text-purple-600 transition-colors dark:text-gray-200 dark:hover:text-purple-400">
+        Dashboard
+      </a>
+      <a routerLink="/projects" 
+         [class.text-purple-600]="isActive('/projects')"
+         [class.after:absolute]="isActive('/projects')"
+         [class.after:bottom-0]="isActive('/projects')"
+         [class.after:left-0]="isActive('/projects')"
+         [class.after:right-0]="isActive('/projects')"
+         [class.after:h-0.5]="isActive('/projects')"
+         [class.after:bg-purple-600]="isActive('/projects')"
+         class="relative text-sm font-medium hover:text-purple-600 transition-colors dark:text-gray-200 dark:hover:text-purple-400">
+        Projects
+      </a>
+      <a routerLink="/milestones" 
+         [class.text-purple-600]="isActive('/milestones')"
+         [class.after:absolute]="isActive('/milestones')"
+         [class.after:bottom-0]="isActive('/milestones')"
+         [class.after:left-0]="isActive('/milestones')"
+         [class.after:right-0]="isActive('/milestones')"
+         [class.after:h-0.5]="isActive('/milestones')"
+         [class.after:bg-purple-600]="isActive('/milestones')"
+         class="relative text-sm font-medium hover:text-purple-600 transition-colors dark:text-gray-200 dark:hover:text-purple-400">
+        Milestones
+      </a>
+      <a routerLink="/reports" 
+         [class.text-purple-600]="isActive('/reports')"
+         [class.after:absolute]="isActive('/reports')"
+         [class.after:bottom-0]="isActive('/reports')"
+         [class.after:left-0]="isActive('/reports')"
+         [class.after:right-0]="isActive('/reports')"
+         [class.after:h-0.5]="isActive('/reports')"
+         [class.after:bg-purple-600]="isActive('/reports')"
+         class="relative text-sm font-medium hover:text-purple-600 transition-colors dark:text-gray-200 dark:hover:text-purple-400">
+        Reports
+      </a>
+      <a routerLink="/settings" 
+         [class.text-purple-600]="isActive('/settings')"
+         [class.after:absolute]="isActive('/settings')"
+         [class.after:bottom-0]="isActive('/settings')"
+         [class.after:left-0]="isActive('/settings')"
+         [class.after:right-0]="isActive('/settings')"
+         [class.after:h-0.5]="isActive('/settings')"
+         [class.after:bg-purple-600]="isActive('/settings')"
+         class="relative text-sm font-medium hover:text-purple-600 transition-colors dark:text-gray-200 dark:hover:text-purple-400">
+        Settings
+      </a>
+    </div>
+    
+    <div class="ml-auto flex items-center gap-2">
+      <button mat-icon-button (click)="toggleTheme()" matTooltip="Toggle theme">
+        <mat-icon *ngIf="(isDarkMode$ | async)">light_mode</mat-icon>
+        <mat-icon *ngIf="!(isDarkMode$ | async)">dark_mode</mat-icon>
+      </button>
+      
+      <ng-container *ngIf="!isAuthenticated">
+        <button mat-stroked-button class="hidden sm:flex">Sign In</button>
+        <button mat-flat-button class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white">Sign Up</button>
+      </ng-container>
+      
+      <ng-container *ngIf="isAuthenticated">
+        <button mat-icon-button [matMenuTriggerFor]="userMenu" aria-label="User menu">
+          <img *ngIf="currentUser?.avatar" [src]="currentUser?.avatar" [alt]="currentUser?.name" class="h-8 w-8 rounded-full">
+          <mat-icon *ngIf="!currentUser?.avatar">account_circle</mat-icon>
+        </button>
+        <mat-menu #userMenu="matMenu">
+          <button mat-menu-item routerLink="/settings">
+            <mat-icon>settings</mat-icon>
+            <span>Settings</span>
+          </button>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>exit_to_app</mat-icon>
+            <span>Logout</span>
+          </button>
+        </mat-menu>
+      </ng-container>
+    </div>
+  </mat-toolbar>
+</header>

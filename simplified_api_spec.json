@@ -1,0 +1,57 @@
+[
+  
+  {
+    "method": "POST",
+    "url": "/projects",
+    "body": {
+      "title": "string",
+      "description": "string",
+      "status": "string",
+      "priority": "string",
+      "startDate": "datetime",
+      "dueDate": "datetime",
+      "teamMembers": [
+        "string"
+      ],
+      "tags": [
+        "string"
+      ],
+      "budget": {
+        "allocated": "number",
+        "currency": "string"
+      },
+      "clientId": "string"
+    }
+  },
+  {
+    "method": "PUT",
+    "url": "/tasks/{taskId}",
+    "body": {
+      "title": "string",
+      "description": "string",
+      "status": "string",
+      "priority": "string",
+      "dueDate": "datetime",
+      "assignedTo": "string",
+      "subtasks": [
+        {
+          "id": "string (optional)",
+          "title": "string",
+          "completed": "boolean"
+        }
+      ]
+    }
+  },
+  {
+    "method": "POST",
+    "url": "/time-entries",
+    "body": {
+      "taskId": "string",
+      "projectId": "string",
+      "description": "string",
+      "startTime": "datetime",
+      "endTime": "datetime",
+      "billable": "boolean"
+    }
+  }
+]

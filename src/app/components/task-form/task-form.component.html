@@ -1,0 +1,54 @@
+<div class="container mx-auto px-4 py-8 max-w-3xl">
+  <h1 class="text-2xl font-bold mb-6 text-gray-800">
+    {{ isEditing ? 'Edit Task' : 'Create New Task' }}
+  </h1>
+
+  <div *ngIf="loading" class="flex flex-col items-center justify-center py-12">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p class="mt-4 text-gray-600">Loading task details...</p>
+  </div>
+
+  <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+    <mat-card class="border-0 shadow-lg transform hover:scale-[1.01] transition-all duration-300">
+      <mat-card-content class="p-6 space-y-4 bg-gradient-to-r from-purple-50 to-indigo-100 rounded-lg shadow-md">
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Task Name</mat-label>
+          <input matInput formControlName="name" placeholder="Enter task name" required class="transition-all duration-300">
+          <mat-error *ngIf="taskForm.get('name')?.hasError('required')">Task name is required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" placeholder="Describe the task" rows="4" class="transition-all duration-300"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status" required>
+            <mat-option value="NOT_STARTED">Not Started</mat-option>
+            <mat-option value="IN_PROGRESS">In Progress</mat-option>
+            <mat-option value="COMPLETED">Completed</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Assigned To</mat-label>
+          <mat-select formControlName="assignedToId">
+            <mat-option [value]="null">Unassigned</mat-option>
+            <mat-option *ngFor="let person of people" [value]="person.id">
+              {{person.firstName}} {{person.lastName}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-flat-button color="primary" type="submit"
+          class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:scale-105 transition-all duration-300"
+          [disabled]="submitting || taskForm.invalid">
+          {{ submitting ? 'Saving...' : (isEditing ? 'Update Task' : 'Create Task') }}
+        </button>
+
+      </mat-card-content>
+    </mat-card>
+  </form>
+</div>
