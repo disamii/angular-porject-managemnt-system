@@ -1,32 +1,63 @@
 <div class="py-8">
   <div class="container mx-auto px-4">
-    <div class="flex items-center justify-between mb-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
       <div>
         <h1 class="text-3xl font-bold mb-2">Milestones</h1>
         <p class="text-slate-600">Track and manage all project milestones</p>
       </div>
       
-      <!-- Dropdown for selecting a project -->
-      <div class="ml-4">
-        <label for="projectSelect" class="block mb-1 text-sm font-medium text-gray-700">For project:</label>
-        <select
-          id="projectSelect"
-          [(ngModel)]="selectedProjectId"
-          (change)="onProjectChange($event)"
-          class="block w-full mt-1 p-2 border border-gray-300 rounded"
+      <div class="flex flex-col md:flex-row gap-4">
+        <!-- Dropdown for selecting a project -->
+        <div>
+          <label for="projectSelect" class="block mb-1 text-sm font-medium text-gray-700">For project:</label>
+          <select
+            id="projectSelect"
+            [(ngModel)]="selectedProjectId"
+            (change)="onProjectChange($event)"
+            class="block w-full mt-1 p-2 border border-gray-300 rounded"
+          >
+            <option *ngFor="let project of allProjects" [value]="project.id">
+              {{ project.title}}
+            </option>
+          </select>
+        </div>
+        
+        <!-- Create new milestone button -->
+        <button 
+          mat-flat-button 
+          color="primary" 
+          class="gap-1 bg-gradient-to-r from-purple-600 to-indigo-600 h-10 self-end"
+          (click)="openCreateMilestoneDialog()"
         >
-          <option *ngFor="let project of allProjects" [value]="project.id">
-            {{ project.title}}
-          </option>
-        </select>
+          <mat-icon>add</mat-icon>
+          Create Milestone
+        </button>
       </div>
     </div>
     
-    <div class="mb-8 overflow-x-hidden ">
-      <mat-tab-group animationDuration="0ms" class="milestone-tabs ">
+    <!-- Loading spinner -->
+    <div *ngIf="loading" class="flex justify-center my-8">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+    
+    <!-- No milestones message -->
+    <div *ngIf="!loading && allMilestones.length === 0" class="text-center my-12">
+      <mat-icon class="text-6xl text-slate-300">assignment</mat-icon>
+      <p class="text-slate-500 mt-4">No milestones found for this project</p>
+      <button 
+        mat-flat-button 
+        color="primary" 
+        class="mt-4 bg-gradient-to-r from-purple-600 to-indigo-600"
+        (click)="openCreateMilestoneDialog()"
+      >
+        Create First Milestone
+      </button>
+    </div>
+    
+    <div *ngIf="!loading && allMilestones.length > 0" class="mb-8 overflow-x-hidden">
+      <mat-tab-group animationDuration="0ms" class="milestone-tabs">
         <!-- All Milestones Tab -->
         <mat-tab label="All Milestones">
-  
           <div class="space-y-6 my-6">
             <mat-card *ngFor="let milestone of allMilestones" class="overflow-hidden border-0 shadow-md hover:shadow-lg transition-all">
               <div class="h-2 w-full bg-gradient-to-r from-purple-500 to-indigo-500"></div>
@@ -47,28 +78,55 @@
                     </div>
                   </div>
 
-                  <button
-                  mat-stroked-button
-                  class="gap-1"
-                  [routerLink]="['/deliverables',milestone.id]"
-                >
-                  View Deliverables
-                  <mat-icon>arrow_right_alt</mat-icon>
-                </button>
-                <button
-                mat-stroked-button
-                class="gap-1"
-                [routerLink]="['/milestones', milestone.id, 'tasks']"
-              >
-                View Tasks
-                <mat-icon>arrow_right_alt</mat-icon>
-              </button>
-              
+                  <div class="flex flex-wrap gap-2">
+                    <button
+                      mat-stroked-button
+                      class="gap-1"
+                      [routerLink]="['/deliverables', milestone.id]"
+                    >
+                      View Deliverables
+                      <mat-icon>arrow_right_alt</mat-icon>
+                    </button>
+                    <button
+                      mat-stroked-button
+                      class="gap-1"
+                      [routerLink]="['/milestones', milestone.id, 'tasks']"
+                    >
+                      View Tasks
+                      <mat-icon>arrow_right_alt</mat-icon>
+                    </button>
+                    
+                    <!-- Actions menu -->
+                    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Milestone actions">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                      <button mat-menu-item (click)="viewMilestoneDetails(milestone)">
+                        <mat-icon>visibility</mat-icon>
+                        <span>View Details</span>
+                      </button>
+                      <button mat-menu-item (click)="openEditMilestoneDialog(milestone)">
+                        <mat-icon>edit</mat-icon>
+                        <span>Edit</span>
+                      </button>
+                      <button mat-menu-item *ngIf="milestone.status !== 'COMPLETED'" (click)="approveMilestone(milestone)">
+                        <mat-icon>check_circle</mat-icon>
+                        <span>Mark as Completed</span>
+                      </button>
+                      <button mat-menu-item (click)="openDeleteConfirmDialog(milestone)">
+                        <mat-icon color="warn">delete</mat-icon>
+                        <span class="text-red-600">Delete</span>
+                      </button>
+                    </mat-menu>
+                  </div>
                 </div>
 
                 <!-- Tasks -->
                 <div class="mt-4">
                   <h4 class="font-medium text-lg mb-2">Tasks</h4>
+                  <div *ngIf="milestone.tasks.length === 0" class="text-slate-500 text-sm">
+                    No tasks for this milestone
+                  </div>
                   <div *ngFor="let task of milestone.tasks" class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
                     <div class="flex items-center gap-2">
                       <mat-icon class="h-4 w-4 text-purple-600">check_circle</mat-icon>
@@ -84,13 +142,16 @@
                 <!-- Deliverables -->
                 <div class="mt-4">
                   <h4 class="font-medium text-lg mb-2">Deliverables</h4>
+                  <div *ngIf="milestone.deliverables.length === 0" class="text-slate-500 text-sm">
+                    No deliverables for this milestone
+                  </div>
                   <div *ngFor="let deliverable of milestone.deliverables" class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
                     <div class="flex items-center gap-2">
                       <mat-icon class="h-4 w-4 text-purple-600">description</mat-icon>
                       <span>{{ deliverable.name }}</span>
                     </div>
                     <div class="flex items-center gap-2">
-                      <span>Reviewed: {{ deliverable.reviewed }}</span>
+                      <span>Reviewed: {{ deliverable.reviewed ? 'Yes' : 'No' }}</span>
                     </div>
                   </div>
                 </div>
@@ -100,9 +161,13 @@
         </mat-tab>
 
         <!-- Pending Approval Tab -->
-        <mat-tab label="Pending Approval" >
-     
+        <mat-tab label="Pending Approval">
           <div class="space-y-6 my-6">
+            <div *ngIf="pendingMilestones.length === 0" class="text-center my-12">
+              <mat-icon class="text-6xl text-slate-300">check_circle</mat-icon>
+              <p class="text-slate-500 mt-4">No pending milestones</p>
+            </div>
+            
             <mat-card *ngFor="let milestone of pendingMilestones" class="overflow-hidden border-0 shadow-md hover:shadow-lg transition-all">
               <div class="h-2 w-full bg-gradient-to-r from-purple-500 to-indigo-500"></div>
               <mat-card-content class="p-6">
@@ -123,19 +188,46 @@
                   </div>
 
                   <div class="flex gap-2">
-                    <button mat-stroked-button class="gap-1">
+                    <button 
+                      mat-stroked-button 
+                      class="gap-1"
+                      (click)="viewMilestoneDetails(milestone)"
+                    >
                       View Details
                       <mat-icon>arrow_right_alt</mat-icon>
                     </button>
-                    <button mat-flat-button color="primary" class="bg-gradient-to-r from-purple-600 to-indigo-600">
+                    <button 
+                      mat-flat-button 
+                      color="primary" 
+                      class="bg-gradient-to-r from-purple-600 to-indigo-600"
+                      (click)="approveMilestone(milestone)"
+                    >
                       Approve
                     </button>
+                    
+                    <!-- Actions menu -->
+                    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Milestone actions">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                      <button mat-menu-item (click)="openEditMilestoneDialog(milestone)">
+                        <mat-icon>edit</mat-icon>
+                        <span>Edit</span>
+                      </button>
+                      <button mat-menu-item (click)="openDeleteConfirmDialog(milestone)">
+                        <mat-icon color="warn">delete</mat-icon>
+                        <span class="text-red-600">Delete</span>
+                      </button>
+                    </mat-menu>
                   </div>
                 </div>
 
                 <!-- Tasks -->
                 <div class="mt-4">
                   <h4 class="font-medium text-lg mb-2">Tasks</h4>
+                  <div *ngIf="milestone.tasks.length === 0" class="text-slate-500 text-sm">
+                    No tasks for this milestone
+                  </div>
                   <div *ngFor="let task of milestone.tasks" class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
                     <div class="flex items-center gap-2">
                       <mat-icon class="h-4 w-4 text-purple-600">check_circle</mat-icon>
@@ -151,13 +243,16 @@
                 <!-- Deliverables -->
                 <div class="mt-4">
                   <h4 class="font-medium text-lg mb-2">Deliverables</h4>
+                  <div *ngIf="milestone.deliverables.length === 0" class="text-slate-500 text-sm">
+                    No deliverables for this milestone
+                  </div>
                   <div *ngFor="let deliverable of milestone.deliverables" class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
                     <div class="flex items-center gap-2">
                       <mat-icon class="h-4 w-4 text-purple-600">description</mat-icon>
                       <span>{{ deliverable.name }}</span>
                     </div>
                     <div class="flex items-center gap-2">
-                      <span>Reviewed: {{ deliverable.reviewed }}</span>
+                      <span>Reviewed: {{ deliverable.reviewed ? 'Yes' : 'No' }}</span>
                     </div>
                   </div>
                 </div>
@@ -168,8 +263,12 @@
 
         <!-- Approved Tab -->
         <mat-tab label="Approved">
-     
           <div class="space-y-6 my-6">
+            <div *ngIf="approvedMilestones.length === 0" class="text-center my-12">
+              <mat-icon class="text-6xl text-slate-300">assignment_turned_in</mat-icon>
+              <p class="text-slate-500 mt-4">No approved milestones</p>
+            </div>
+            
             <mat-card *ngFor="let milestone of approvedMilestones" class="overflow-hidden border-0 shadow-md hover:shadow-lg transition-all">
               <div class="h-2 w-full bg-gradient-to-r from-purple-500 to-indigo-500"></div>
               <mat-card-content class="p-6">
@@ -190,15 +289,39 @@
                     </div>
                   </div>
 
-                  <button mat-stroked-button class="gap-1">
-                    View Details
-                    <mat-icon>arrow_right_alt</mat-icon>
-                  </button>
+                  <div class="flex gap-2">
+                    <button 
+                      mat-stroked-button 
+                      class="gap-1"
+                      (click)="viewMilestoneDetails(milestone)"
+                    >
+                      View Details
+                      <mat-icon>arrow_right_alt</mat-icon>
+                    </button>
+                    
+                    <!-- Actions menu -->
+                    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Milestone actions">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                      <button mat-menu-item (click)="openEditMilestoneDialog(milestone)">
+                        <mat-icon>edit</mat-icon>
+                        <span>Edit</span>
+                      </button>
+                      <button mat-menu-item (click)="openDeleteConfirmDialog(milestone)">
+                        <mat-icon color="warn">delete</mat-icon>
+                        <span class="text-red-600">Delete</span>
+                      </button>
+                    </mat-menu>
+                  </div>
                 </div>
 
                 <!-- Tasks -->
                 <div class="mt-4">
                   <h4 class="font-medium text-lg mb-2">Tasks</h4>
+                  <div *ngIf="milestone.tasks.length === 0" class="text-slate-500 text-sm">
+                    No tasks for this milestone
+                  </div>
                   <div *ngFor="let task of milestone.tasks" class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
                     <div class="flex items-center gap-2">
                       <mat-icon class="h-4 w-4 text-purple-600">check_circle</mat-icon>
@@ -214,13 +337,16 @@
                 <!-- Deliverables -->
                 <div class="mt-4">
                   <h4 class="font-medium text-lg mb-2">Deliverables</h4>
+                  <div *ngIf="milestone.deliverables.length === 0" class="text-slate-500 text-sm">
+                    No deliverables for this milestone
+                  </div>
                   <div *ngFor="let deliverable of milestone.deliverables" class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
                     <div class="flex items-center gap-2">
                       <mat-icon class="h-4 w-4 text-purple-600">description</mat-icon>
                       <span>{{ deliverable.name }}</span>
                     </div>
                     <div class="flex items-center gap-2">
-                      <span>Reviewed: {{ deliverable.reviewed }}</span>
+                      <span>Reviewed: {{ deliverable.reviewed ? 'Yes' : 'No' }}</span>
                     </div>
                   </div>
                 </div>
@@ -229,8 +355,6 @@
           </div>
         </mat-tab>
       </mat-tab-group>
-
-
     </div>
   </div>
 </div>

@@ -10,6 +10,7 @@ import { ProjectCardComponent } from "../../components/project-card/project-card
 import { AlertComponent } from "../../components/alert/alert.component"
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { MatButtonModule } from "@angular/material/button"
 @Component({
   selector: "app-dashboard",
   templateUrl: "./dashboard.component.html",
@@ -21,7 +22,9 @@ import { CommonModule } from '@angular/common';
     AlertComponent,
     RouterModule,
     MatIconModule,
-    MatChipsModule],
+    MatChipsModule,
+    MatButtonModule
+    ]
 })
 export class DashboardComponent implements OnInit {
   projects: Project[] = []

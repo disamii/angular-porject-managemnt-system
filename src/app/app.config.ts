@@ -4,14 +4,14 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { routes } from './app.routes';
+import { AuthService } from './features/project/services/auth.service';
+import { MilestoneService } from './features/project/services/milestone.service';
+import { NotificationService } from './features/project/services/notification.service';
+import { ProjectService } from './features/project/services/project.service';
+import { ReportService } from './features/project/services/report.service';
+import { ThemeService } from './features/project/services/theme.service';
+import { UserService } from './features/project/services/user.service';
 
-import { ProjectService } from './services/project.service';
-import { MilestoneService } from './services/milestone.service';
-import { UserService } from './services/user.service';
-import { ReportService } from './services/report.service';
-import { NotificationService } from './services/notification.service';
-import { AuthService } from './services/auth.service';
-import { ThemeService } from './services/theme.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [

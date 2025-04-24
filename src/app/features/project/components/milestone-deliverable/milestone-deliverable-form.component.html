@@ -1,11 +1,11 @@
 <!-- Modal Wrapper with Transparent Overlay -->
-<div *ngIf="isModalOpen" class="flex items-center justify-center min-h-screen bg-black bg-opacity-50 fixed inset-0 z-50">
+<div *ngIf="isModalOpen" class="flex items-center justify-center min-h-screen  fixed inset-0 z-50">
   <!-- Modal Content Card -->
-  <mat-card class="w-full max-w-lg mx-auto bg-white shadow-xl rounded-lg overflow-hidden">
+  <mat-card class="w-full max-w-lg mx-auto bg-gradient-to-r from-purple-50 to-indigo-100 shadow-xl rounded-lg overflow-hidden">
     <mat-card-content class="p-6">
       <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Add Deliverable</h2>
 
-      <!-- Form -->
+      <!-- Form -->   
       <form [formGroup]="deliverableForm" (ngSubmit)="onSubmit()">
         <!-- Deliverable Name Field -->
         <mat-form-field appearance="fill" class="w-full mb-4">

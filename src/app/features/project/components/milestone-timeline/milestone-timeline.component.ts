@@ -1,39 +1,46 @@
 import { Component, Input, OnInit } from '@angular/core';
 import type { Milestone } from '../../models/milestone.model';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-milestone-timeline',
   templateUrl: './milestone-timeline.component.html',
   standalone: true,
   imports: [
-    FormsModule,
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
     MatIconModule,
     MatCardModule,
     MatChipsModule,
     MatFormFieldModule,
     MatTabsModule,
+    MatButtonModule,
+    MatInputModule,
+    MatSelectModule,
   ],
 })
 export class MilestoneTimelineComponent implements OnInit {
-  
-handleApproval(arg0: number,arg1: boolean) {
-throw new Error('Method not implemented.');
-}
   @Input() milestones: Milestone[] = [];
   selectedMilestone: Milestone | null = null;
-  approvalNote = '';
+  approvalForm!: FormGroup;
 
-  constructor() {}
+  constructor(private fb: FormBuilder) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.approvalForm = this.fb.group({
+      note: ['', [Validators.required, Validators.minLength(5)]],
+    });
+  }
 
   getStatusColor(status: 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED'): string {
     switch (status) {
@@ -70,21 +77,25 @@ throw new Error('Method not implemented.');
 
   handleStatusChange(id: number, newStatus: 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED'): void {
     this.milestones = this.milestones.map((m) =>
-      m.id === id
-        ? {
-            ...m,
-            status: newStatus,
-          }
-        : m
+      m.id === id ? { ...m, status: newStatus } : m
     );
   }
 
   openApprovalDialog(milestone: Milestone): void {
     this.selectedMilestone = milestone;
+    this.approvalForm.reset(); // Clear form each time dialog opens
   }
 
   closeApprovalDialog(): void {
     this.selectedMilestone = null;
-    this.approvalNote = '';
+    this.approvalForm.reset();
+  }
+
+  handleApproval(id: number, approve: boolean): void {
+    if (this.approvalForm.valid) {
+      const note = this.approvalForm.get('note')?.value;
+      console.log({ milestoneId: id, approve, note });
+      this.closeApprovalDialog();
+    }
   }
 }

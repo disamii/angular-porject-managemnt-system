@@ -160,7 +160,7 @@ export class ProjectService {
 
 
   // PUT /api/v1/projects/{id} - Update project details
-  updateProject(id: number, project: Project): Observable<Project> {
+  updateProject(id: number, project: CreateProjectDto): Observable<Project> {
     return this.http.put<Project>(`${this.apiUrl}/${id}`, project);
   }
 

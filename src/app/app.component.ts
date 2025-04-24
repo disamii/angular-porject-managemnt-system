@@ -1,11 +1,10 @@
-import { Component, type OnInit } from "@angular/core"
-import { Router, NavigationEnd, RouterModule, } from "@angular/router"
-import { RouterOutlet } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { Component, type OnInit } from "@angular/core";
+import { Router, NavigationEnd, RouterModule, } from "@angular/router";
+import { RouterOutlet } from '@angular/router'
 import { filter } from "rxjs/operators"
-import { ThemeService } from "./services/theme.service"
-import { HeaderComponent } from "./components/header/header.component"
 import { FooterComponent } from "./components/footer/footer.component"
+import { ThemeService } from "./features/project/services/theme.service"
+import { HeaderComponent } from "./components/header/header.component"
 
 @Component({
   selector: "app-root",

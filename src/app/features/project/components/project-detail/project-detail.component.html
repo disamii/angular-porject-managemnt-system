@@ -21,12 +21,33 @@
             <p class="text-slate-600">{{ project.description }}</p>
           </div>
           <div class="flex gap-3">
-            <button mat-stroked-button class="gap-1">
+            <button mat-stroked-button class="gap-1" [matMenuTriggerFor]="projectMenu">
+              <mat-icon>more_vert</mat-icon>
+              Actions
+            </button>
+            <mat-menu #projectMenu="matMenu" class="bg-gradient-to-r from-purple-50 to-indigo-100">
+              <button mat-menu-item [routerLink]="['/projects', project.id, 'edit']">
+                <mat-icon>edit</mat-icon>
+                <span>Edit Project</span>
+              </button>
+              
+              <button mat-menu-item (click)="deleteProject()">
+                <mat-icon color="warn">delete</mat-icon>
+                <span class="text-red-600">Delete Project</span>
+              </button>
+              <mat-divider></mat-divider>
+              <button mat-menu-item (click)="exportProject()">
+                <mat-icon>description</mat-icon>
+                <span>Export Project</span>
+              </button>
+            </mat-menu>
+            
+            <button mat-stroked-button class="gap-1" (click)="exportProject()">
               <mat-icon>description</mat-icon>
               Export
             </button>
-            <button mat-flat-button color="primary" class="gap-1 bg-gradient-to-r from-purple-600 to-indigo-600">
-              <mat-icon>task_alt</mat-icon>
+            <button mat-flat-button color="primary" class="gap-1 bg-gradient-to-r from-purple-600 to-indigo-600" (click)="shareProject()">
+              <mat-icon>share</mat-icon>
               Share
             </button>
           </div>
@@ -132,13 +153,35 @@
                   </div>
 
                   <div class="space-y-4">
-                    <h3 class="font-medium text-lg">Team Members</h3>
+                    <div class="flex justify-between items-center">
+                      <h3 class="font-medium text-lg">Team Members</h3>
+                      <button mat-stroked-button color="primary" (click)="openAddMemberDialog()">
+                        <mat-icon>person_add</mat-icon>
+                        Add Member
+                      </button>
+                    </div>
                     <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-                      <app-team-member *ngFor="let member of project.members"
-                                        
-                                        [name]="member.firstName + ' ' + member.lastName"
-                                        [role]="'Team Member'">
-                      </app-team-member>
+                      <div *ngFor="let member of project.members" class="relative">
+                        <app-team-member 
+                          [name]="member.firstName + ' ' + member.lastName"
+                          [role]="'Team Member'">
+                        </app-team-member>
+                        <button mat-icon-button class="absolute top-2 right-2" 
+                                [matMenuTriggerFor]="memberMenu"
+                                (click)="$event.stopPropagation()">
+                          <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #memberMenu="matMenu">
+                          <button mat-menu-item>
+                            <mat-icon>email</mat-icon>
+                            <span>Contact</span>
+                          </button>
+                          <button mat-menu-item (click)="removeMemberFromProject(member.id)">
+                            <mat-icon color="warn">person_remove</mat-icon>
+                            <span class="text-red-600">Remove</span>
+                          </button>
+                        </mat-menu>
+                      </div>
                     </div>
                   </div>
 
@@ -168,11 +211,91 @@
 
             <mat-tab label="Milestones">
               <mat-card class="border-0 shadow-md">
-                <mat-card-header>
+                <mat-card-header class="flex justify-between items-center">
                   <mat-card-title>Project Milestones</mat-card-title>
+                  <button mat-stroked-button color="primary" (click)="setActiveTab('add-milestone')">
+                    <mat-icon>add</mat-icon>
+                    Add Milestone
+                  </button>
                 </mat-card-header>
                 <mat-card-content>
                   <app-milestone-timeline [milestones]="project.milestones"></app-milestone-timeline>
+                </mat-card-content>
+              </mat-card>
+            </mat-tab>
+
+            <mat-tab label="Team">
+              <mat-card class="border-0 shadow-md">
+                <mat-card-header class="flex justify-between items-center">
+                  <mat-card-title>Project Team</mat-card-title>
+                  <button mat-stroked-button color="primary" (click)="openAddMemberDialog()">
+                    <mat-icon>person_add</mat-icon>
+                    Add Member
+                  </button>
+                </mat-card-header>
+                <mat-card-content class="p-6">
+                  <div class="mb-6">
+                    <h3 class="font-medium text-lg mb-4">Project Leaders</h3>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                      <div class="p-4 border rounded-lg">
+                        <div class="flex items-center gap-3">
+                          <div class="h-12 w-12 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center">
+                            <mat-icon>person</mat-icon>
+                          </div>
+                          <div>
+                            <p class="font-medium">{{ project.principalInvestigator.firstName }} {{ project.principalInvestigator.lastName }}</p>
+                            <p class="text-sm text-slate-500">Principal Investigator</p>
+                            <p class="text-sm text-blue-600">{{ project.principalInvestigator.email }}</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="p-4 border rounded-lg">
+                        <div class="flex items-center gap-3">
+                          <div class="h-12 w-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                            <mat-icon>person</mat-icon>
+                          </div>
+                          <div>
+                            <p class="font-medium">{{ project.researchAdvisor.firstName }} {{ project.researchAdvisor.lastName }}</p>
+                            <p class="text-sm text-slate-500">Research Advisor</p>
+                            <p class="text-sm text-blue-600">{{ project.researchAdvisor.email }}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h3 class="font-medium text-lg mb-4">Team Members</h3>
+                    <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+                      <div *ngFor="let member of project.members" class="p-4 border rounded-lg relative">
+                        <button mat-icon-button class="absolute top-2 right-2" [matMenuTriggerFor]="memberMenu">
+                          <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #memberMenu="matMenu">
+                          <button mat-menu-item>
+                            <mat-icon>email</mat-icon>
+                            <span>Contact</span>
+                          </button>
+                          <button mat-menu-item (click)="removeMemberFromProject(member.id)">
+                            <mat-icon color="warn">person_remove</mat-icon>
+                            <span class="text-red-600">Remove</span>
+                          </button>
+                        </mat-menu>
+                        
+                        <div class="flex items-center gap-3">
+                          <div class="h-12 w-12 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center">
+                            <mat-icon>person</mat-icon>
+                          </div>
+                          <div>
+                            <p class="font-medium">{{ member.firstName }} {{ member.lastName }}</p>
+                            <p class="text-sm text-slate-500">Team Member</p>
+                            <p class="text-sm text-blue-600">{{ member.email }}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </mat-card-content>
               </mat-card>
             </mat-tab>
@@ -207,11 +330,23 @@
             <mat-card-content class="space-y-4 p-6">
               <button mat-stroked-button class="w-full justify-start gap-2">
                 <mat-icon>upload</mat-icon>
-                Upload delivarable
+                Upload Deliverable
               </button>
-              <button mat-stroked-button class="w-full justify-start gap-2">
+              <button mat-stroked-button class="w-full justify-start gap-2" (click)="openAddMemberDialog()">
                 <mat-icon>people</mat-icon>
                 Invite Team Member
+              </button>
+              <button mat-stroked-button class="w-full justify-start gap-2" (click)="setActiveTab('add-milestone')">
+                <mat-icon>add_task</mat-icon>
+                Add Milestone
+              </button>
+              <button mat-stroked-button class="w-full justify-start gap-2" [routerLink]="['/projects', project.id, 'edit']">
+                <mat-icon>edit</mat-icon>
+                <span>Edit Project</span>
+              </button>
+              <button mat-stroked-button color="warn" class="w-full justify-start gap-2" (click)="deleteProject()">
+                <mat-icon>delete</mat-icon>
+                Delete Project
               </button>
             </mat-card-content>
           </mat-card>
