@@ -1,0 +1,114 @@
+<div class="py-8">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 class="text-3xl font-bold mb-2">Rubric Management</h1>
+          <p class="text-slate-600">Create and manage evaluation rubrics</p>
+        </div>
+        <button mat-flat-button color="primary" class="bg-gradient-to-r from-purple-600 to-indigo-600" (click)="openCreateDialog()">
+          <mat-icon>add</mat-icon>
+          Create Rubric
+        </button>
+      </div>
+
+      <mat-card class="border-0 shadow-md mb-8">
+        <mat-card-content class="p-6">
+          <div class="flex flex-col md:flex-row gap-4 mb-6">
+            <mat-form-field appearance="fill" class="w-full md:w-1/3">
+              <mat-label>Search</mat-label>
+              <input matInput placeholder="Search rubrics..." [(ngModel)]="searchTerm" (keyup)="applyFilter()">
+              <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="w-full md:w-1/3">
+              <mat-label>Status</mat-label>
+              <mat-select [(ngModel)]="statusFilter" (selectionChange)="applyFilter()">
+                <mat-option value="">All Statuses</mat-option>
+                <mat-option value="DRAFT">Draft</mat-option>
+                <mat-option value="ACTIVE">Active</mat-option>
+                <mat-option value="ARCHIVED">Archived</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="w-full md:w-1/3">
+              <mat-label>Sort By</mat-label>
+              <mat-select [(ngModel)]="sortBy" (selectionChange)="applyFilter()">
+                <mat-option value="name">Name</mat-option>
+                <mat-option value="status">Status</mat-option>
+                <mat-option value="version">Version</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <mat-card *ngFor="let rubric of filteredRubrics" class="border border-slate-200 hover:border-purple-200 hover:shadow-md transition-all">
+              <mat-card-content class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 class="font-bold text-lg">{{ rubric.name }}</h3>
+                    <p class="text-sm text-slate-600">{{ rubric.description }}</p>
+                  </div>
+                  <button mat-icon-button [matMenuTriggerFor]="menu">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item [routerLink]="['/evaluation/rubrics', rubric.publicId]">
+                      <mat-icon>visibility</mat-icon>
+                      <span>View Details</span>
+                    </button>
+                    <button mat-menu-item (click)="editRubric(rubric)">
+                      <mat-icon>edit</mat-icon>
+                      <span>Edit</span>
+                    </button>
+                    <button mat-menu-item (click)="duplicateRubric(rubric)">
+                      <mat-icon>content_copy</mat-icon>
+                      <span>Duplicate</span>
+                    </button>
+                    <button mat-menu-item (click)="deleteRubric(rubric)" *ngIf="rubric.status !== 'ACTIVE'">
+                      <mat-icon>delete</mat-icon>
+                      <span>Delete</span>
+                    </button>
+                  </mat-menu>
+                </div>
+
+                <div class="flex items-center justify-between mb-4">
+                  <mat-chip [ngClass]="{
+                    'bg-amber-100 text-amber-700': rubric.status === 'DRAFT',
+                    'bg-green-100 text-green-700': rubric.status === 'ACTIVE',
+                    'bg-slate-100 text-slate-700': rubric.status === 'ARCHIVED'
+                  }">{{ rubric.status }}</mat-chip>
+                  <span class="text-sm text-slate-500">v{{ rubric.version }}</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <p class="text-xs text-slate-500">Document Passing Score</p>
+                    <p class="font-medium">{{ rubric.documentPassingScore }}%</p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-slate-500">Presentation Passing Score</p>
+                    <p class="font-medium">{{ rubric.presentationPassingScore }}%</p>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-slate-500">{{ rubric.sections.length }} sections</span>
+                  <button mat-stroked-button color="primary" [routerLink]="['/evaluation/rubrics', rubric.publicId]">
+                    View Details
+                  </button>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+          <div *ngIf="filteredRubrics.length === 0" class="text-center py-8">
+            <mat-icon class="text-slate-400 text-5xl mb-4">search_off</mat-icon>
+            <p class="text-slate-600">No rubrics found matching your criteria</p>
+            <button mat-stroked-button color="primary" class="mt-4" (click)="clearFilters()">
+              Clear Filters
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>

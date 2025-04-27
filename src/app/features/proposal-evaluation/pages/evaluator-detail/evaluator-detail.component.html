@@ -1,0 +1,231 @@
+<div class="evaluator-detail-container">
+  <!-- Loading state -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error && !loading" class="error-container">
+    <mat-icon class="error-icon">error_outline</mat-icon>
+    <h2>Failed to load evaluator details</h2>
+    <p>There was an error loading the evaluator information.</p>
+    <button mat-raised-button color="primary" (click)="loadEvaluator()">Retry</button>
+    <button mat-button (click)="goBack()">Go Back</button>
+  </div>
+
+  <!-- Content when loaded -->
+  <div *ngIf="!loading && !error && evaluator">
+    <!-- Header with actions -->
+    <mat-card class="header-card">
+      <mat-card-header>
+        <div mat-card-avatar>
+          <mat-icon [color]="getTypeColor(evaluator.type)">person</mat-icon>
+        </div>
+        <mat-card-title class="flex items-center gap-2">
+          {{ evaluator.name }}
+          <span class="status-badge" [ngClass]="evaluator.isActive ? 'active' : 'inactive'">
+            {{ evaluator.isActive ? 'Active' : 'Inactive' }}
+          </span>
+        </mat-card-title>
+        <mat-card-subtitle>{{ getTypeLabel(evaluator.type) }} Evaluator</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="profile-section">
+          <div class="profile-info">
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Email</span>
+                <span class="info-value">{{ evaluator.email }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Organization</span>
+                <span class="info-value">{{ evaluator.organization }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Created</span>
+                <span class="info-value">{{ evaluator.createdAt | date:'mediumDate' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Last Updated</span>
+                <span class="info-value">{{ evaluator.updatedAt | date:'mediumDate' }}</span>
+              </div>
+            </div>
+            
+            <div class="mt-4">
+              <span class="info-label">Expertise</span>
+              <div class="expertise-chips">
+                <mat-chip-set>
+                  <mat-chip *ngFor="let expertise of evaluator.expertise">{{ expertise }}</mat-chip>
+                </mat-chip-set>
+              </div>
+            </div>
+          </div>
+          
+          <div class="profile-stats" *ngIf="stats">
+            <div class="stat-card">
+              <div class="stat-value">{{ stats.completedAssignments }} / {{ stats.totalAssignments }}</div>
+              <div class="stat-label">Assignments Completed</div>
+            </div>
+            
+            <div class="stat-card">
+              <div class="stat-value">{{ stats.averageScore | number:'1.1-1' }}%</div>
+              <div class="stat-label">Average Score</div>
+            </div>
+            
+            <div class="stat-card">
+              <div class="stat-value">{{ stats.onTimePercentage }}%</div>
+              <div class="stat-label">On-Time Completion</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="action-buttons">
+          <button mat-button (click)="goBack()">
+            <mat-icon>arrow_back</mat-icon>
+            Back to Evaluators
+          </button>
+          <button mat-raised-button color="primary" (click)="editEvaluator()">
+            <mat-icon>edit</mat-icon>
+            Edit Evaluator
+          </button>
+          <button mat-stroked-button [color]="evaluator.isActive ? 'warn' : 'primary'" (click)="toggleStatus()">
+            <mat-icon>{{ evaluator.isActive ? 'block' : 'check_circle' }}</mat-icon>
+            {{ evaluator.isActive ? 'Deactivate' : 'Activate' }}
+          </button>
+          <button mat-stroked-button color="warn" (click)="deleteEvaluator()">
+            <mat-icon>delete</mat-icon>
+            Delete
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Tabs for different sections -->
+    <mat-tab-group>
+      <!-- Assignments Tab -->
+      <mat-tab label="Assignments">
+        <div class="tab-content">
+          <h3 class="section-title">
+            <mat-icon>assignment</mat-icon>
+            Recent Assignments
+          </h3>
+          
+          <div *ngIf="evaluator.recentAssignments.length === 0" class="no-data">
+            <p>No assignments found for this evaluator.</p>
+          </div>
+          
+          <table mat-table [dataSource]="evaluator.recentAssignments" class="assignments-table" *ngIf="evaluator.recentAssignments.length > 0">
+            <!-- Proposal Title Column -->
+            <ng-container matColumnDef="proposalTitle">
+              <th mat-header-cell *matHeaderCellDef>Proposal</th>
+              <td mat-cell *matCellDef="let assignment">{{ assignment.proposalTitle }}</td>
+            </ng-container>
+            
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let assignment">
+                <span class="status-badge" [style.background-color]="getStatusColor(assignment.status) + '20'" [style.color]="getStatusColor(assignment.status)">
+                  {{ assignment.status }}
+                </span>
+              </td>
+            </ng-container>
+            
+            <!-- Assigned Date Column -->
+            <ng-container matColumnDef="assignedDate">
+              <th mat-header-cell *matHeaderCellDef>Assigned</th>
+              <td mat-cell *matCellDef="let assignment">{{ assignment.assignedDate | date:'shortDate' }}</td>
+            </ng-container>
+            
+            <!-- Due Date Column -->
+            <ng-container matColumnDef="dueDate">
+              <th mat-header-cell *matHeaderCellDef>Due</th>
+              <td mat-cell *matCellDef="let assignment">{{ assignment.dueDate | date:'shortDate' }}</td>
+            </ng-container>
+            
+            <!-- Completed Date Column -->
+            <ng-container matColumnDef="completedDate">
+              <th mat-header-cell *matHeaderCellDef>Completed</th>
+              <td mat-cell *matCellDef="let assignment">
+                {{ assignment.completedDate ? (assignment.completedDate | date:'shortDate') : 'N/A' }}
+              </td>
+            </ng-container>
+            
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let assignment">
+                <button mat-icon-button color="primary" (click)="viewAssignment(assignment.id)" matTooltip="View Assignment">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+            
+            <tr mat-header-row *matHeaderRowDef="assignmentColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: assignmentColumns;"></tr>
+          </table>
+        </div>
+      </mat-tab>
+      
+      <!-- Performance Tab -->
+      <mat-tab label="Performance">
+        <div class="tab-content">
+          <h3 class="section-title">
+            <mat-icon>insights</mat-icon>
+            Performance Metrics
+          </h3>
+          
+          <div class="progress-container" *ngIf="stats">
+            <div class="progress-label">
+              <span class="label">Average Score</span>
+              <span class="value">{{ stats.averageScore | number:'1.1-1' }}%</span>
+            </div>
+            <mat-progress-bar mode="determinate" [value]="stats.averageScore"></mat-progress-bar>
+          </div>
+          
+          <div class="progress-container" *ngIf="stats">
+            <div class="progress-label">
+              <span class="label">On-Time Completion</span>
+              <span class="value">{{ stats.onTimePercentage }}%</span>
+            </div>
+            <mat-progress-bar mode="determinate" [value]="stats.onTimePercentage"></mat-progress-bar>
+          </div>
+          
+          <div class="progress-container" *ngIf="stats">
+            <div class="progress-label">
+              <span class="label">Average Completion Time</span>
+              <span class="value">{{ stats.averageCompletionTime | number:'1.1-1' }} days</span>
+            </div>
+          </div>
+          
+          <h3 class="section-title mt-6">
+            <mat-icon>pie_chart</mat-icon>
+            Expertise Distribution
+          </h3>
+          
+          <div class="expertise-chart-container">
+            <div *ngIf="evaluator.expertiseAreas.length === 0" class="no-data">
+              <p>No expertise data available.</p>
+            </div>
+            
+            <div *ngIf="evaluator.expertiseAreas.length > 0">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div *ngFor="let area of evaluator.expertiseAreas" class="p-4 border rounded-lg">
+                  <div class="flex justify-between items-center">
+                    <span class="font-medium">{{ area.name }}</span>
+                    <span class="text-sm text-gray-600">{{ area.count }} assignments</span>
+                  </div>
+                  <mat-progress-bar 
+                    mode="determinate" 
+                    [value]="(area.count / evaluator.assignmentCount) * 100" 
+                    class="mt-2">
+                  </mat-progress-bar>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

@@ -1,0 +1,292 @@
+<div class="py-8">
+  <div class="container mx-auto px-4">
+    <!-- Header with back button and actions -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+      <div class="flex items-center gap-2">
+        <button mat-icon-button color="primary" routerLink="/evaluation/rubrics">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div>
+          <h1 class="text-3xl font-bold mb-1">{{ rubric.name || 'Rubric Details' }}</h1>
+          <p class="text-slate-600">{{ rubric.description || 'Loading rubric details...' }}</p>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <button 
+          mat-stroked-button 
+          color="primary" 
+          [disabled]="!rubric || rubric.status === 'ARCHIVED'"
+          (click)="openEditRubricDialog()">
+          <mat-icon>edit</mat-icon>
+          Edit Rubric
+        </button>
+        <button 
+          mat-flat-button 
+          color="primary" 
+          class="bg-gradient-to-r from-purple-600 to-indigo-600"
+          [disabled]="!rubric || rubric.status !== 'DRAFT'"
+          (click)="publishRubric()">
+          <mat-icon>publish</mat-icon>
+          Publish
+        </button>
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="duplicateRubric()">
+            <mat-icon>content_copy</mat-icon>
+            <span>Duplicate</span>
+          </button>
+          <button 
+            mat-menu-item 
+            *ngIf="rubric && rubric.status === 'ACTIVE'"
+            (click)="archiveRubric()">
+            <mat-icon>archive</mat-icon>
+            <span>Archive</span>
+          </button>
+          <button 
+            mat-menu-item 
+            *ngIf="rubric && rubric.status !== 'ACTIVE'"
+            (click)="deleteRubric()">
+            <mat-icon>delete</mat-icon>
+            <span>Delete</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+
+    <!-- Loading state -->
+    <div *ngIf="!rubric" class="flex justify-center items-center h-64">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <!-- Rubric content -->
+    <div *ngIf="rubric" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Left column: Rubric info -->
+      <div class="lg:col-span-1">
+        <mat-card class="border-0 shadow-md mb-6">
+          <mat-card-content class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <mat-chip [ngClass]="{
+                'bg-amber-100 text-amber-700': rubric.status === 'DRAFT',
+                'bg-green-100 text-green-700': rubric.status === 'ACTIVE',
+                'bg-slate-100 text-slate-700': rubric.status === 'ARCHIVED'
+              }">{{ rubric.status }}</mat-chip>
+              <span class="text-sm text-slate-500">v{{ rubric.version }}</span>
+            </div>
+
+            <h3 class="text-lg font-semibold mb-2">Passing Scores</h3>
+            <div class="mb-4">
+              <p class="text-sm text-slate-600 mb-1">Document Review</p>
+              <div class="flex items-center gap-2">
+                <mat-progress-bar 
+                  mode="determinate" 
+                  [value]="rubric.documentPassingScore" 
+                  class="flex-grow">
+                </mat-progress-bar>
+                <span class="font-medium">{{ rubric.documentPassingScore }}%</span>
+              </div>
+            </div>
+            <div class="mb-6">
+              <p class="text-sm text-slate-600 mb-1">Presentation Review</p>
+              <div class="flex items-center gap-2">
+                <mat-progress-bar 
+                  mode="determinate" 
+                  [value]="rubric.presentationPassingScore" 
+                  class="flex-grow">
+                </mat-progress-bar>
+                <span class="font-medium">{{ rubric.presentationPassingScore }}%</span>
+              </div>
+            </div>
+
+            <mat-divider class="mb-6"></mat-divider>
+
+            <h3 class="text-lg font-semibold mb-4">Sections Summary</h3>
+            <div class="space-y-3">
+              <div *ngFor="let section of rubric.sections" class="flex items-center justify-between">
+                <span class="text-sm">{{ section.title }}</span>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs text-slate-500">{{ section.criteria.length }} criteria</span>
+                  <mat-chip class="text-xs">{{ section.weight }}%</mat-chip>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="border-0 shadow-md">
+          <mat-card-content class="p-6">
+            <h3 class="text-lg font-semibold mb-4">Actions</h3>
+            <div class="space-y-3">
+              <button mat-stroked-button color="primary" class="w-full justify-start" (click)="exportRubric()">
+                <mat-icon>download</mat-icon>
+                <span class="ml-2">Export Rubric</span>
+              </button>
+              <button mat-stroked-button color="primary" class="w-full justify-start" (click)="previewRubric()">
+                <mat-icon>visibility</mat-icon>
+                <span class="ml-2">Preview Rubric</span>
+              </button>
+              <button 
+                mat-stroked-button 
+                color="primary" 
+                class="w-full justify-start"
+                [disabled]="rubric.status !== 'ACTIVE'"
+                (click)="createAssignment()">
+                <mat-icon>assignment</mat-icon>
+                <span class="ml-2">Create Assignment</span>
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Right column: Sections and criteria -->
+      <div class="lg:col-span-2">
+        <mat-card class="border-0 shadow-md">
+          <mat-card-content class="p-6">
+            <div class="flex justify-between items-center mb-6">
+              <h2 class="text-xl font-bold">Sections & Criteria</h2>
+              <button 
+                mat-flat-button 
+                color="primary" 
+                class="bg-gradient-to-r from-purple-600 to-indigo-600"
+                [disabled]="rubric.status === 'ARCHIVED'"
+                (click)="openAddSectionDialog()">
+                <mat-icon>add</mat-icon>
+                Add Section
+              </button>
+            </div>
+
+            <!-- Empty state -->
+            <div *ngIf="rubric.sections.length === 0" class="text-center py-8">
+              <mat-icon class="text-slate-400 text-5xl mb-4">category</mat-icon>
+              <p class="text-slate-600 mb-2">No sections added yet</p>
+              <p class="text-sm text-slate-500 mb-4">Add sections to organize your evaluation criteria</p>
+              <button 
+                mat-stroked-button 
+                color="primary"
+                [disabled]="rubric.status === 'ARCHIVED'"
+                (click)="openAddSectionDialog()">
+                Add First Section
+              </button>
+            </div>
+
+            <!-- Sections list -->
+            <div 
+              cdkDropList 
+              (cdkDropListDropped)="dropSection($event)"
+              class="space-y-4"
+              *ngIf="rubric.sections.length > 0">
+              <mat-card 
+                *ngFor="let section of rubric.sections" 
+                class="border border-slate-200 mb-4"
+                cdkDrag
+                [cdkDragDisabled]="rubric.status === 'ARCHIVED'">
+                <!-- Drag handle -->
+                <div class="flex justify-center p-1 border-b border-slate-100 bg-slate-50 cursor-move" cdkDragHandle *ngIf="rubric.status !== 'ARCHIVED'">
+                  <mat-icon class="text-slate-400">drag_indicator</mat-icon>
+                </div>
+                
+                <mat-card-content class="p-4">
+                  <div class="flex justify-between items-start mb-4">
+                    <div>
+                      <div class="flex items-center gap-2">
+                        <h3 class="text-lg font-semibold">{{ section.title }}</h3>
+                        <mat-chip class="text-xs">{{ section.weight }}%</mat-chip>
+                      </div>
+                      <p class="text-sm text-slate-600">{{ section.description }}</p>
+                    </div>
+                    <div class="flex">
+                      <button 
+                        mat-icon-button 
+                        color="primary"
+                        [disabled]="rubric.status === 'ARCHIVED'"
+                        (click)="editSection(section)">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button 
+                        mat-icon-button 
+                        color="warn"
+                        [disabled]="rubric.status === 'ARCHIVED'"
+                        (click)="deleteSection(section)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Criteria list -->
+                  <div 
+                    cdkDropList 
+                    (cdkDropListDropped)="dropCriterion($event, section)"
+                    class="space-y-2 mt-4">
+                    <mat-card 
+                      *ngFor="let criterion of section.criteria" 
+                      class="border border-slate-100 bg-slate-50"
+                      cdkDrag
+                      [cdkDragDisabled]="rubric.status === 'ARCHIVED'">
+                      <mat-card-content class="p-3">
+                        <div class="flex justify-between items-start">
+                          <div class="flex-grow">
+                            <div class="flex items-center gap-2 mb-1">
+                              <h4 class="font-medium">{{ criterion.name }}</h4>
+                              <mat-chip 
+                                class="text-xs"
+                                [ngClass]="{
+                                  'bg-blue-100 text-blue-700': criterion.phase === 'DOCUMENT_REVIEW',
+                                  'bg-purple-100 text-purple-700': criterion.phase === 'PRESENTATION_REVIEW'
+                                }">
+                                {{ criterion.phase === 'DOCUMENT_REVIEW' ? 'Document' : 'Presentation' }}
+                              </mat-chip>
+                              <mat-chip class="text-xs">{{ criterion.maxScore }} pts</mat-chip>
+                            </div>
+                            <p class="text-sm text-slate-600">{{ criterion.description }}</p>
+                            
+                            <div *ngIf="criterion.condition" class="mt-2 p-2 bg-amber-50 border border-amber-100 rounded-md">
+                              <p class="text-xs text-amber-800 font-medium">Condition:</p>
+                              <p class="text-xs text-amber-700">{{ criterion.condition }}</p>
+                              <div class="flex items-center gap-4 mt-1 text-xs">
+                                <span>Met: {{ criterion.conditionMetScore }} pts</span>
+                                <span>Not Met: {{ criterion.conditionNotMetScore }} pts</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="flex ml-2">
+                            <button 
+                              mat-icon-button 
+                              color="primary"
+                              [disabled]="rubric.status === 'ARCHIVED'"
+                              (click)="editCriterion(section, criterion)">
+                              <mat-icon>edit</mat-icon>
+                            </button>
+                            <button 
+                              mat-icon-button 
+                              color="warn"
+                              [disabled]="rubric.status === 'ARCHIVED'"
+                              (click)="deleteCriterion(section, criterion)">
+                              <mat-icon>delete</mat-icon>
+                            </button>
+                          </div>
+                        </div>
+                      </mat-card-content>
+                    </mat-card>
+
+                    <!-- Add criterion button -->
+                    <div 
+                      *ngIf="rubric.status !== 'ARCHIVED'"
+                      class="flex justify-center p-2 border border-dashed border-slate-200 rounded-md hover:border-purple-300 transition-colors cursor-pointer"
+                      (click)="openAddCriterionDialog(section)">
+                      <div class="flex items-center text-slate-500 hover:text-purple-600">
+                        <mat-icon>add</mat-icon>
+                        <span class="ml-1 text-sm">Add Criterion</span>
+                      </div>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>

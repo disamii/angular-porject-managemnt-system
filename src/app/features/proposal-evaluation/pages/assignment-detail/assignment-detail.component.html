@@ -1,0 +1,220 @@
+<div class="py-8">
+  <div class="container mx-auto px-4">
+    <!-- Header with back button and actions -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+      <div class="flex items-center gap-2">
+        <button mat-icon-button color="primary" routerLink="/evaluation/assignments">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div>
+          <h1 class="text-3xl font-bold mb-1">Assignment Details</h1>
+          <p class="text-slate-600" *ngIf="assignment">{{ assignment.proposalTitle }}</p>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <button 
+          mat-stroked-button 
+          color="primary" 
+          [disabled]="loading || !assignment || assignment.status === 'COMPLETED'"
+          (click)="submitScores()">
+          <mat-icon>grading</mat-icon>
+          Submit Scores
+        </button>
+        <button 
+          mat-flat-button 
+          color="warn" 
+          [disabled]="loading || !assignment"
+          (click)="deleteAssignment()">
+          <mat-icon>delete</mat-icon>
+          Delete
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading state -->
+    <div *ngIf="loading" class="flex justify-center items-center h-64">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+
+    <!-- Assignment content -->
+    <div *ngIf="!loading && assignment" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Left column: Assignment info -->
+      <div class="lg:col-span-1">
+        <mat-card class="border-0 shadow-md mb-6">
+          <mat-card-content class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <mat-chip [ngClass]="getStatusColor(assignment.status)">{{ assignment.status }}</mat-chip>
+              <button 
+                mat-icon-button 
+                color="primary" 
+                [disabled]="editMode || assignment.status === 'COMPLETED'"
+                (click)="toggleEditMode()" 
+                matTooltip="Edit Assignment">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </div>
+
+            <div *ngIf="!editMode">
+              <div class="mb-4">
+                <h3 class="text-lg font-semibold mb-2">Assignment Details</h3>
+                <div class="grid grid-cols-1 gap-4">
+                  <div>
+                    <p class="text-sm text-slate-500">Proposal</p>
+                    <p class="font-medium">{{ assignment.proposalTitle }}</p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-slate-500">Evaluator</p>
+                    <p class="font-medium">{{ assignment.evaluatorName }}</p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-slate-500">Rubric</p>
+                    <p class="font-medium">{{ assignment.rubricName }}</p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-slate-500">Assigned Date</p>
+                    <p class="font-medium">{{ assignment.assignedDate | date }}</p>
+                  </div>
+                  <div *ngIf="assignment.status === 'COMPLETED'">
+                    <p class="text-sm text-slate-500">Completed Date</p>
+                    <p class="font-medium">{{ assignment.completedDate | date }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <mat-divider class="mb-4"></mat-divider>
+
+              <div>
+                <h3 class="text-lg font-semibold mb-2">Evaluation Progress</h3>
+                <div class="mb-2 flex justify-between text-sm">
+                  <span>Completion</span>
+                  <span class="font-medium">{{ calculateProgress() }}%</span>
+                </div>
+                <mat-progress-bar 
+                  mode="determinate" 
+                  [value]="calculateProgress()" 
+                  [color]="assignment.status === 'COMPLETED' ? 'accent' : 'primary'"
+                  class="mb-4">
+                </mat-progress-bar>
+
+                <div *ngIf="assignment.status === 'COMPLETED'" class="mt-4">
+                  <p class="text-sm text-slate-500 mb-1">Total Score</p>
+                  <p class="text-3xl font-bold">{{ assignment.totalScore }}/100</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Edit mode -->
+            <div *ngIf="editMode">
+              <form [formGroup]="feedbackForm">
+                <h3 class="text-lg font-semibold mb-4">Edit Assignment</h3>
+                
+                <mat-form-field appearance="fill" class="w-full mb-4">
+                  <mat-label>Status</mat-label>
+                  <mat-select formControlName="status">
+                    <mat-option value="NOT_STARTED">Not Started</mat-option>
+                    <mat-option value="IN_PROGRESS">In Progress</mat-option>
+                    <mat-option value="COMPLETED">Completed</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="feedbackForm?.get('status')?.hasError('required')">
+                    Status is required
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="fill" class="w-full mb-4">
+                  <mat-label>Feedback</mat-label>
+                  <textarea 
+                    matInput 
+                    formControlName="feedback" 
+                    rows="4" 
+                    placeholder="Enter feedback for this assignment">
+                  </textarea>
+                  <mat-error *ngIf="feedbackForm.get('feedback')?.hasError('required')">
+                    Feedback is required
+                  </mat-error>
+                </mat-form-field>
+
+                <div class="flex justify-end gap-2">
+                  <button mat-button color="warn" (click)="cancelEdit()">Cancel</button>
+                  <button 
+                    mat-flat-button 
+                    color="primary" 
+                    [disabled]="feedbackForm.invalid"
+                    (click)="saveChanges()">
+                    Save Changes
+                  </button>
+                </div>
+              </form>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Right column: Scores -->
+      <div class="lg:col-span-2">
+        <mat-card class="border-0 shadow-md">
+          <mat-card-content class="p-6">
+            <h2 class="text-xl font-bold mb-6">Evaluation Scores</h2>
+
+            <!-- Empty state -->
+            <div *ngIf="assignment.scores.length === 0" class="text-center py-8">
+              <mat-icon class="text-slate-400 text-5xl mb-4">score</mat-icon>
+              <p class="text-slate-600 mb-2">No scores submitted yet</p>
+              <p class="text-sm text-slate-500 mb-4">Submit scores to complete this evaluation</p>
+              <button 
+                mat-stroked-button 
+                color="primary"
+                [disabled]="assignment.status === 'COMPLETED'"
+                (click)="submitScores()">
+                Submit Scores
+              </button>
+            </div>
+
+            <!-- Scores table -->
+            <div *ngIf="assignment.scores.length > 0">
+              <table mat-table [dataSource]="assignment.scores" class="w-full">
+                <!-- Criteria Name Column -->
+                <ng-container matColumnDef="criteriaName">
+                  <th mat-header-cell *matHeaderCellDef>Criteria</th>
+                  <td mat-cell *matCellDef="let score">{{ score.criteriaName }}</td>
+                </ng-container>
+
+                <!-- Awarded Score Column -->
+                <ng-container matColumnDef="awardedScore">
+                  <th mat-header-cell *matHeaderCellDef>Score</th>
+                  <td mat-cell *matCellDef="let score">{{ score.awardedScore }}</td>
+                </ng-container>
+
+                <!-- Max Score Column -->
+                <ng-container matColumnDef="maxScore">
+                  <th mat-header-cell *matHeaderCellDef>Max</th>
+                  <td mat-cell *matCellDef="let score">{{ score.maxScore }}</td>
+                </ng-container>
+
+                <!-- Comments Column -->
+                <ng-container matColumnDef="comments">
+                  <th mat-header-cell *matHeaderCellDef>Comments</th>
+                  <td mat-cell *matCellDef="let score">{{ score.comments }}</td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
+
+              <div class="mt-6 flex justify-end">
+                <button 
+                  mat-flat-button 
+                  color="primary" 
+                  class="bg-gradient-to-r from-purple-600 to-indigo-600"
+                  [disabled]="assignment.status === 'COMPLETED'"
+                  (click)="submitScores()">
+                  <mat-icon>edit</mat-icon>
+                  Edit Scores
+                </button>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>

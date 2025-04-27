@@ -1,0 +1,154 @@
+<div class="score-submission-container">
+  <!-- Loading state -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p class="mt-4 text-center">Loading evaluation data...</p>
+  </div>
+
+  <div *ngIf="!loading">
+    <!-- Header with assignment info -->
+    <mat-card class="header-card">
+      <mat-card-header>
+        <mat-card-title>
+          <div class="flex items-center">
+            <button mat-icon-button [routerLink]="['/evaluation/assignments']" matTooltip="Back to Assignments">
+              <mat-icon>arrow_back</mat-icon>
+            </button>
+            <span>Evaluation Submission</span>
+          </div>
+        </mat-card-title>
+        <mat-card-subtitle>
+          {{ assignment.proposalTitle }}
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div>
+            <p><strong>Proposal ID:</strong> {{ assignment.proposalId }}</p>
+            <p><strong>Evaluation Type:</strong> {{ assignment.evaluationType || 'Standard Evaluation' }}</p>
+            <p><strong>Due Date:</strong> {{ assignment.dueDate | date:'mediumDate' }}</p>
+          </div>
+          <div>
+            <p><strong>Assigned Date:</strong> {{ assignment.assignedDate | date:'mediumDate' }}</p>
+            <p><strong>Status:</strong> {{ assignment.status }}</p>
+            <p *ngIf="lastSaved">
+              <strong>Last Saved:</strong> {{ lastSaved | date:'medium' }}
+            </p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Score Summary -->
+    <mat-card class="summary-card" *ngIf="scoreSummary">
+      <mat-card-header>
+        <mat-card-title>Evaluation Progress</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <!-- Overall score -->
+        <div class="flex items-center justify-between mb-4">
+          <div class="text-lg font-medium">Overall Score</div>
+          <div class="flex items-center">
+            <mat-chip [ngClass]="{
+              'high': scoreSummary.percentageScore >= 80,
+              'medium': scoreSummary.percentageScore >= 60 && scoreSummary.percentageScore < 80,
+              'low': scoreSummary.percentageScore < 60
+            }" class="score-chip">
+              {{ scoreSummary.totalScore }} / {{ scoreSummary.maxPossibleScore }}
+              ({{ scoreSummary.percentageScore | number:'1.0-0' }}%)
+            </mat-chip>
+          </div>
+        </div>
+
+        <!-- Completion progress -->
+        <div class="progress-container">
+          <div class="progress-label">Completion</div>
+          <mat-progress-bar 
+            class="progress-bar" 
+            [color]="scoreSummary.completionPercentage === 100 ? 'primary' : 'accent'"
+            [mode]="'determinate'" 
+            [value]="scoreSummary.completionPercentage">
+          </mat-progress-bar>
+          <div class="progress-value">{{ scoreSummary.completionPercentage | number:'1.0-0' }}%</div>
+        </div>
+
+        <!-- Criteria progress -->
+        <div class="progress-container">
+          <div class="progress-label">Criteria</div>
+          <div class="progress-bar">
+            {{ scoreSummary.criteriaScored }} of {{ scoreSummary.totalCriteria }} criteria scored
+          </div>
+        </div>
+
+        <!-- Sections progress -->
+        <div class="progress-container">
+          <div class="progress-label">Sections</div>
+          <div class="progress-bar">
+            {{ scoreSummary.sectionsCompleted }} of {{ scoreSummary.totalSections }} sections completed
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Score Form -->
+    <form [formGroup]="scoreForm" (ngSubmit)="saveAllScores()">
+      <div formArrayName="scores">
+        <!-- Sections -->
+        <ng-container *ngFor="let section of criteriaGroups | keyvalue">
+          <mat-card class="section-card">
+            <mat-card-header>
+              <mat-card-title class="section-title">
+                <span class="section-name">{{ section.key }}</span>
+                <span class="section-progress">
+                  {{ getScoredCriteriaCount(section.value) }} / {{ section.value.length }} criteria scored
+                </span>
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <!-- Criteria within this section -->
+              <ng-container *ngFor="let criterion of section.value">
+                <app-criterion-score-form 
+                  [criterion]="criterion"
+                  [showDetailedFeedback]="true"
+                  (scoreChanged)="onScoreChange($event)">
+                </app-criterion-score-form>
+              </ng-container>
+            </mat-card-content>
+          </mat-card>
+        </ng-container>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="action-buttons">
+        <span class="auto-save-status" [ngClass]="autoSaveStatus">
+          {{ getAutoSaveStatusText() }}
+        </span>
+        <button 
+          mat-stroked-button 
+          type="button" 
+          [routerLink]="['/evaluation/assignments']">
+          <mat-icon>arrow_back</mat-icon>
+          Back to Assignments
+        </button>
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="submit" 
+          [disabled]="scoreForm.invalid || autoSaveStatus === 'saving'">
+          <mat-icon>save</mat-icon>
+          Save All
+        </button>
+        <button 
+          mat-raised-button 
+          color="accent" 
+          type="button" 
+          [disabled]="scoreSummary.completionPercentage < 100 || submitting || autoSaveStatus === 'saving'"
+          (click)="submitScores()">
+          <mat-icon>send</mat-icon>
+          Submit Evaluation
+          <mat-spinner *ngIf="submitting" diameter="20" class="ml-2"></mat-spinner>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,163 @@
+<div class="py-8">
+    <div class="container mx-auto px-4">
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold mb-2">Evaluation Dashboard</h1>
+        <p class="text-slate-600">Manage rubrics, evaluators, and assignments</p>
+      </div>
+
+      <!-- Loading state -->
+      <div *ngIf="loading" class="flex justify-center items-center py-12">
+        <mat-spinner diameter="40"></mat-spinner>
+        <span class="ml-4 text-slate-600">Loading dashboard data...</span>
+      </div>
+
+      <div *ngIf="!loading">
+        <!-- Quick Actions Widget -->
+        <app-quick-actions-widget title="Quick Actions" class="mb-8 flex ">
+          <button mat-flat-button color="primary" class="h-auto py-4 bg-gradient-to-r from-purple-600 to-indigo-600" routerLink="/evaluation/rubrics">
+            <div class="flex flex-col items-center">
+              <mat-icon class="text-3xl mb-2">add_circle</mat-icon>
+              <span>Create New Rubric</span>
+            </div>
+          </button>
+          <button mat-flat-button color="primary" class="h-auto py-4 bg-gradient-to-r from-emerald-600 to-teal-600" routerLink="/evaluation/evaluators">
+            <div class="flex flex-col items-center">
+              <mat-icon class="text-3xl mb-2">person_add</mat-icon>
+              <span>Add Evaluator</span>
+            </div>
+          </button>
+          <button mat-flat-button color="primary" class="h-auto py-4 bg-gradient-to-r from-amber-600 to-orange-600" routerLink="/evaluation/assignments">
+            <div class="flex flex-col items-center">
+              <mat-icon class="text-3xl mb-2">assignment_add</mat-icon>
+              <span>Create Assignment</span>
+            </div>
+          </button>
+          <!-- <button mat-flat-button color="primary" class="h-auto py-4 bg-gradient-to-r from-blue-600 to-sky-600" (click)="generateReport()">
+            <div class="flex flex-col items-center">
+              <mat-icon class="text-3xl mb-2">assessment</mat-icon>
+              <span>Generate Report</span>
+            </div>
+          </button> -->
+        </app-quick-actions-widget>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <!-- Assignment Stats Widget -->
+          <app-assignment-stats-widget [stats]="assignmentStats"></app-assignment-stats-widget>
+
+          <!-- Rubrics Widget -->
+          <app-evaluation-stats-widget
+            title="Rubrics"
+            subtitle="{{ rubrics.length }} Total"
+            icon="assignment"
+            iconBgClass="bg-purple-100"
+            iconTextClass="text-purple-600"
+            routerLink="/evaluation/rubrics"
+            buttonText="View All Rubrics"
+          >
+            <div *ngFor="let rubric of rubrics.slice(0, 3)" class="flex items-center justify-between">
+              <div>
+                <p class="font-medium">{{ rubric.name }}</p>
+                <p class="text-xs text-slate-500">{{ rubric.sections.length }} sections</p>
+              </div>
+              <mat-chip [ngClass]="{
+                'bg-green-100 text-green-700': rubric.status === 'ACTIVE',
+                'bg-amber-100 text-amber-700': rubric.status === 'DRAFT',
+                'bg-slate-100 text-slate-700': rubric.status === 'ARCHIVED'
+              }">{{ rubric.status }}</mat-chip>
+            </div>
+          </app-evaluation-stats-widget>
+
+          <!-- Evaluators Widget -->
+          <app-evaluation-stats-widget
+            title="Evaluators"
+            subtitle="{{ evaluators.length }} Total"
+            icon="people"
+            iconBgClass="bg-emerald-100"
+            iconTextClass="text-emerald-600"
+            routerLink="/evaluation/evaluators"
+            buttonText="View All Evaluators"
+          >
+            <div *ngFor="let evaluator of evaluators.slice(0, 3)" class="flex items-center justify-between">
+              <div>
+                <p class="font-medium">{{ evaluator.name }}</p>
+                <p class="text-xs text-slate-500">{{ evaluator.expertise }}</p>
+              </div>
+              <mat-chip [ngClass]="{
+                'bg-blue-100 text-blue-700': evaluator.type === 'INTERNAL',
+                'bg-purple-100 text-purple-700': evaluator.type === 'EXTERNAL'
+              }">{{ evaluator.type }}</mat-chip>
+            </div>
+          </app-evaluation-stats-widget>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <!-- Activity Widget -->
+          <app-evaluation-activity-widget title="Recent Activity">
+            <div class="relative pl-6 before:absolute before:left-0 before:top-2 before:h-full before:w-0.5 before:bg-purple-100">
+              <div class="absolute left-0 top-2 h-4 w-4 rounded-full bg-purple-600 -translate-x-1.5"></div>
+              <div class="mb-1 text-sm font-medium">New Rubric Created</div>
+              <div class="text-sm text-slate-600">Sample Rubric 1</div>
+              <div class="mt-1 text-xs text-slate-500">2 days ago</div>
+            </div>
+
+            <div class="relative pl-6 before:absolute before:left-0 before:top-2 before:h-full before:w-0.5 before:bg-purple-100">
+              <div class="absolute left-0 top-2 h-4 w-4 rounded-full bg-emerald-500 -translate-x-1.5"></div>
+              <div class="mb-1 text-sm font-medium">Assignment Completed</div>
+              <div class="text-sm text-slate-600">Proposal 2 evaluated by Evaluator 2</div>
+              <div class="mt-1 text-xs text-slate-500">3 days ago</div>
+            </div>
+
+            <div class="relative pl-6 before:absolute before:left-0 before:top-2 before:h-full before:w-0.5 before:bg-purple-100">
+              <div class="absolute left-0 top-2 h-4 w-4 rounded-full bg-amber-500 -translate-x-1.5"></div>
+              <div class="mb-1 text-sm font-medium">New Evaluator Added</div>
+              <div class="text-sm text-slate-600">Evaluator 1 added as Document Reviewer</div>
+              <div class="mt-1 text-xs text-slate-500">1 week ago</div>
+            </div>
+
+            <div class="relative pl-6">
+              <div class="absolute left-0 top-2 h-4 w-4 rounded-full bg-blue-500 -translate-x-1.5"></div>
+              <div class="mb-1 text-sm font-medium">Rubric Published</div>
+              <div class="text-sm text-slate-600">Sample Rubric 2 published</div>
+              <div class="mt-1 text-xs text-slate-500">1 week ago</div>
+            </div>
+          </app-evaluation-activity-widget>
+
+          <!-- Progress Widget -->
+          <app-evaluation-progress-widget title="Evaluation Progress">
+            <div class="space-y-4">
+              <div *ngFor="let assignment of assignments.slice(0, 3)">
+                <div class="flex items-center justify-between text-sm">
+                  <span>{{ assignment.proposalTitle }}</span>
+                  <span class="font-medium">
+                    {{ assignment.status === 'COMPLETED' ? '100%' : 
+                       assignment.status === 'IN_PROGRESS' ? '60%' : '0%' }}
+                  </span>
+                </div>
+                <mat-progress-bar 
+                  mode="determinate" 
+                  [value]="assignment.status === 'COMPLETED' ? 100 : 
+                           assignment.status === 'IN_PROGRESS' ? 60 : 0" 
+                  [color]="assignment.status === 'COMPLETED' ? 'primary' : 
+                           assignment.status === 'IN_PROGRESS' ? 'accent' : 'warn'"
+                  class="h-2 rounded-full">
+                </mat-progress-bar>
+              </div>
+
+              <div class="space-y-2 mt-6">
+                <div class="flex items-center justify-between text-sm">
+                  <span>Overall Progress</span>
+                  <span class="font-medium">{{ assignmentStats.completionRate?.toFixed(0) || 0 }}%</span>
+                </div>
+                <mat-progress-bar 
+                  mode="determinate" 
+                  [value]="assignmentStats.completionRate || 0" 
+                  color="primary" 
+                  class="h-2 rounded-full">
+                </mat-progress-bar>
+              </div>
+            </div>
+          </app-evaluation-progress-widget>
+        </div>
+      </div>
+    </div>
+  </div>
