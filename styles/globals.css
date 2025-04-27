@@ -11,6 +11,9 @@ body {
     text-wrap: balance;
   }
 }
+.mat-option {
+  background-color: black;
+}
 
 @layer base {
   :root {
