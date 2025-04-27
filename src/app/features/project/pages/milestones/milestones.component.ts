@@ -21,7 +21,7 @@ import { MilestoneFormComponent } from "../../components/milestone-form/mileston
 import { ProjectService } from "../../services/project.service"
 import { Milestone } from "../../models/project.model"
 import { MilestoneService } from "../../services/milestone.service"
-import { ConfirmDialogComponent } from "../../components/confirm-dialog/confirm-dialog.component"
+import { ConfirmDialogComponent } from "../../../../components/confirm-dialog/confirm-dialog.component"
 
 @Component({
   selector: "app-milestones",

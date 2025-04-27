@@ -59,32 +59,32 @@
               <mat-card-content class="p-6 space-y-6">
                 <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
                   <div class="grid gap-4 sm:grid-cols-2">
-                    <mat-form-field appearance="outline">
+                    <mat-form-field appearance="fill">
                       <mat-label>First Name</mat-label>
                       <input matInput formControlName="firstName" required>
                       <mat-error *ngIf="profileForm.get('firstName')?.invalid">First name is required</mat-error>
                     </mat-form-field>
                     
-                    <mat-form-field appearance="outline">
+                    <mat-form-field appearance="fill">
                       <mat-label>Last Name</mat-label>
                       <input matInput formControlName="lastName" required>
                       <mat-error *ngIf="profileForm.get('lastName')?.invalid">Last name is required</mat-error>
                     </mat-form-field>
                   </div>
 
-                  <mat-form-field appearance="outline" class="w-full">
+                  <mat-form-field appearance="fill" class="w-full">
                     <mat-label>Email</mat-label>
                     <input matInput formControlName="email" type="email" required>
                     <mat-error *ngIf="profileForm.get('email')?.invalid">Please enter a valid email</mat-error>
                   </mat-form-field>
 
-                  <mat-form-field appearance="outline" class="w-full">
+                  <mat-form-field appearance="fill" class="w-full">
                     <mat-label>Job Title</mat-label>
                     <input matInput formControlName="jobTitle" required>
                     <mat-error *ngIf="profileForm.get('jobTitle')?.invalid">Job title is required</mat-error>
                   </mat-form-field>
 
-                  <mat-form-field appearance="outline" class="w-full">
+                  <mat-form-field appearance="fill" class="w-full">
                     <mat-label>Bio</mat-label>
                     <textarea matInput formControlName="bio" rows="4" required></textarea>
                     <mat-error *ngIf="profileForm.get('bio')?.invalid">Bio is required</mat-error>
@@ -169,20 +169,20 @@
                   <div class="space-y-4">
                     <h3 class="text-lg font-medium">Change Password</h3>
                     <div class="space-y-4">
-                      <mat-form-field appearance="outline" class="w-full">
+                      <mat-form-field appearance="fill" class="w-full">
                         <mat-label>Current Password</mat-label>
                         <input matInput formControlName="currentPassword" type="password" required>
                         <mat-error *ngIf="securityForm.get('currentPassword')?.invalid">Current password is required</mat-error>
                       </mat-form-field>
 
-                      <mat-form-field appearance="outline" class="w-full">
+                      <mat-form-field appearance="fill" class="w-full">
                         <mat-label>New Password</mat-label>
                         <input matInput formControlName="newPassword" type="password" required>
                         <mat-error *ngIf="securityForm.get('newPassword')?.hasError('required')">New password is required</mat-error>
                         <mat-error *ngIf="securityForm.get('newPassword')?.hasError('minlength')">Password must be at least 8 characters</mat-error>
                       </mat-form-field>
 
-                      <mat-form-field appearance="outline" class="w-full">
+                      <mat-form-field appearance="fill" class="w-full">
                         <mat-label>Confirm New Password</mat-label>
                         <input matInput formControlName="confirmPassword" type="password" required>
                         <mat-error *ngIf="securityForm.get('confirmPassword')?.hasError('required')">Please confirm your password</mat-error>

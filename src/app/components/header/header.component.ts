@@ -1,14 +1,15 @@
 import { Component, type OnInit } from "@angular/core"
 import  { Router, RouterModule } from "@angular/router"
-import  { AuthService } from "../../services/auth.service"
-import  { ThemeService } from "../../services/theme.service"
+
 import type { Observable } from "rxjs"
-import type { User } from "../../models/user.model"
 import { MatToolbarModule } from "@angular/material/toolbar"
 import { MatIconModule } from "@angular/material/icon"
 import { MatMenuModule } from "@angular/material/menu"
 import { CommonModule } from '@angular/common';  
 import { MatButtonModule } from "@angular/material/button"
+import { User } from "../../features/users/user.model"
+import { AuthService } from "../../features/project/services/auth.service"
+import { ThemeService } from "../../features/project/services/theme.service"
 @Component({
   selector: "app-header",
   templateUrl: "./header.component.html",

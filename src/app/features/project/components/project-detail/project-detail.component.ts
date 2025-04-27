@@ -4,7 +4,6 @@ import  { CreateProjectDto, Project } from "../../models/project.model"
 import  { Milestone } from "../../models/project.model"
 import  { ProjectService } from "../../services/project.service"
 import  { NotificationService } from "../../services/notification.service"
-import  { ActivityItem } from "../activity-feed/activity-feed.component"
 import  { MatDialog } from "@angular/material/dialog"
 
 import { MatIconModule } from "@angular/material/icon"
@@ -17,15 +16,16 @@ import { MilestoneTimelineComponent } from "../milestone-timeline/milestone-time
 import { MilestoneFormComponent } from "../milestone-form/milestone-form.component"
 import { ProjectProgressComponent } from "../project-progress/project-progress.component"
 import { TeamMemberComponent } from "../team-member/team-member.component"
-import { LoadingSpinnerComponent } from "../loading-spinner/loading-spinner.component"
-import { ActivityFeedComponent } from "../activity-feed/activity-feed.component"
-import { AlertComponent } from "../alert/alert.component"
+
 import { CommonModule } from "@angular/common"
 import { MatFormFieldModule } from "@angular/material/form-field"
 import { MatButtonModule } from "@angular/material/button"
-import { ConfirmDialogComponent } from "../confirm-dialog/confirm-dialog.component"
 import { MatDividerModule } from "@angular/material/divider"
 import { SelectPersonDialogComponent } from "../select-person-dialog/select-person-dialog.component"
+import { ActivityFeedComponent, ActivityItem } from "../../../../components/activity-feed/activity-feed.component"
+import { AlertComponent } from "../../../../components/alert/alert.component"
+import { ConfirmDialogComponent } from "../../../../components/confirm-dialog/confirm-dialog.component"
+import { LoadingSpinnerComponent } from "../../../../components/loading-spinner/loading-spinner.component"
 
 @Component({
   selector: "app-project-detail",

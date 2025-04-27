@@ -29,6 +29,12 @@ export const routes: Routes = [
   { path: 'milestones/:milestoneId/tasks/:taskId/edit', component: TaskFormComponent },
   { path: 'reports', component: ReportsComponent },
   { path: 'settings', component: SettingsComponent },
+  {
+    path: "evaluation",
+    loadChildren: () =>
+      import("./features/proposal-evaluation/proposal-evaluation.routes").then((m) => m.PROPOSAL_EVALUATION_ROUTES),
+  },
   { path: '**', component: NotFoundComponent },
+
 ];
 

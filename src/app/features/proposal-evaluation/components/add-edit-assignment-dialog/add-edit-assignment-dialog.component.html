@@ -1,0 +1,84 @@
+<div class="p-6">
+  <h2 mat-dialog-title class="text-xl font-bold mb-4">
+    {{ isEditMode ? 'Edit Assignment' : 'Create New Assignment' }}
+  </h2>
+  
+  <mat-dialog-content>
+    <!-- Loading state -->
+    <div *ngIf="loading" class="flex justify-center items-center py-8">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+    
+    <!-- Form content -->
+    <form [formGroup]="assignmentForm" *ngIf="!loading" class="space-y-4">
+      <!-- Proposal selection -->
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Proposal</mat-label>
+        <mat-select formControlName="proposalPublicId" required>
+          <mat-option *ngFor="let proposal of proposals" [value]="proposal.publicId">
+            {{ proposal.title }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="hasError('proposalPublicId', 'required')">
+          Proposal is required
+        </mat-error>
+      </mat-form-field>
+      
+      <!-- Evaluator selection -->
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Evaluator</mat-label>
+        <mat-select formControlName="evaluatorPublicId" required>
+          <mat-option *ngFor="let evaluator of evaluators" [value]="evaluator.publicId">
+            {{ evaluator.name }} ({{ evaluator.expertise }})
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="hasError('evaluatorPublicId', 'required')">
+          Evaluator is required
+        </mat-error>
+      </mat-form-field>
+      
+      <!-- Rubric selection -->
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Evaluation Rubric</mat-label>
+        <mat-select formControlName="rubricPublicId" required>
+          <mat-option *ngFor="let rubric of rubrics" [value]="rubric.publicId">
+            {{ rubric.name }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="hasError('rubricPublicId', 'required')">
+          Evaluation rubric is required
+        </mat-error>
+      </mat-form-field>
+      
+      <!-- Due date selection -->
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Due Date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="dueDate" required>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="hasError('dueDate', 'required')">
+          Due date is required
+        </mat-error>
+      </mat-form-field>
+      
+      <!-- Notes -->
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Notes</mat-label>
+        <textarea matInput formControlName="notes" rows="3" placeholder="Add any additional notes or instructions..."></textarea>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()" [disabled]="submitting">Cancel</button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="onSubmit()" 
+      [disabled]="assignmentForm.invalid || submitting"
+      class="ml-2">
+      <span *ngIf="!submitting">{{ isEditMode ? 'Update' : 'Create' }}</span>
+      <mat-spinner *ngIf="submitting" diameter="20" class="ml-2"></mat-spinner>
+    </button>
+  </mat-dialog-actions>
+</div>

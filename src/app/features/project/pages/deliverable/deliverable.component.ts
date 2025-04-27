@@ -12,7 +12,7 @@ import { MatSnackBarModule, MatSnackBar } from "@angular/material/snack-bar"
 import {  ActivatedRoute, RouterModule } from "@angular/router"
 import  { MatDialog } from "@angular/material/dialog"
 import { MilestoneDeliverableFormComponent } from "../../components/milestone-deliverable/milestone-deliverable-form.component"
-import { ConfirmDialogComponent } from "../../components/confirm-dialog/confirm-dialog.component"
+import { ConfirmDialogComponent } from "../../../../components/confirm-dialog/confirm-dialog.component"
 
 @Component({
   selector: "app-deliverable-list",

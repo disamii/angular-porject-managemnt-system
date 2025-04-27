@@ -12,7 +12,6 @@ import { MatIconModule } from "@angular/material/icon"
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner"
 import { MatMenuModule } from "@angular/material/menu"
 import { MatDialogModule } from "@angular/material/dialog"
-import { ConfirmDialogComponent } from "../../components/confirm-dialog/confirm-dialog.component"
 
 @Component({
   selector: "app-task-list",

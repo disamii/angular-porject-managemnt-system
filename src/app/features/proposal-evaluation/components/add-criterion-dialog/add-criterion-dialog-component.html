@@ -1,0 +1,109 @@
+<h2 mat-dialog-title>{{ data.editMode ? 'Edit Criterion' : 'Add New Criterion' }}</h2>
+<form [formGroup]="criterionForm" (ngSubmit)="onSubmit()">
+  <div mat-dialog-content>
+    <mat-form-field appearance="fill" class="w-full mb-4">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" placeholder="Enter criterion name">
+      <mat-error *ngIf="criterionForm.get('name')?.hasError('required')">
+        Name is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full mb-4">
+      <mat-label>Description</mat-label>
+      <textarea 
+        matInput 
+        formControlName="description" 
+        placeholder="Enter criterion description"
+        rows="3">
+      </textarea>
+      <mat-error *ngIf="criterionForm.get('description')?.hasError('required')">
+        Description is required
+      </mat-error>
+    </mat-form-field>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Max Score</mat-label>
+        <input 
+          matInput 
+          type="number" 
+          formControlName="maxScore" 
+          placeholder="Enter max score">
+        <mat-error *ngIf="criterionForm.get('maxScore')?.hasError('required') || 
+                         criterionForm.get('maxScore')?.hasError('min')">
+          Max score must be greater than 0
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Phase</mat-label>
+        <mat-select formControlName="phase">
+          <mat-option value="DOCUMENT_REVIEW">Document Review</mat-option>
+          <mat-option value="PRESENTATION_REVIEW">Presentation Review</mat-option>
+        </mat-select>
+        <mat-error *ngIf="criterionForm.get('phase')?.hasError('required')">
+          Phase is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-divider class="mb-4"></mat-divider>
+
+    <div class="mb-4">
+      <mat-checkbox formControlName="hasCondition">This criterion has a condition</mat-checkbox>
+    </div>
+
+    <div *ngIf="criterionForm.get('hasCondition')?.value" class="mb-4">
+      <mat-form-field appearance="fill" class="w-full mb-4">
+        <mat-label>Condition</mat-label>
+        <textarea 
+          matInput 
+          formControlName="condition" 
+          placeholder="Enter condition description"
+          rows="2">
+        </textarea>
+        <mat-error *ngIf="criterionForm.get('condition')?.hasError('required')">
+          Condition is required
+        </mat-error>
+      </mat-form-field>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Score if Condition Met</mat-label>
+          <input 
+            matInput 
+            type="number" 
+            formControlName="conditionMetScore" 
+            placeholder="Enter score">
+          <mat-error *ngIf="criterionForm.get('conditionMetScore')?.hasError('required')">
+            Score is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Score if Condition Not Met</mat-label>
+          <input 
+            matInput 
+            type="number" 
+            formControlName="conditionNotMetScore" 
+            placeholder="Enter score">
+          <mat-error *ngIf="criterionForm.get('conditionNotMetScore')?.hasError('required')">
+            Score is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+
+  <div mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button">Cancel</button>
+    <button 
+      mat-flat-button 
+      color="primary" 
+      type="submit"
+      [disabled]="criterionForm.invalid">
+      {{ data.editMode ? 'Update' : 'Add' }}
+    </button>
+  </div>
+</form>

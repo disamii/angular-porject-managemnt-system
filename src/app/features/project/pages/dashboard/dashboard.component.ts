@@ -5,12 +5,12 @@ import  { NotificationService } from "../../services/notification.service"
 import { MatChipsModule } from "@angular/material/chips"
 import { MatIconModule } from "@angular/material/icon"
 
-import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component"
 import { ProjectCardComponent } from "../../components/project-card/project-card.component"
-import { AlertComponent } from "../../components/alert/alert.component"
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from "@angular/material/button"
+import { AlertComponent } from "../../../../components/alert/alert.component"
+import { LoadingSpinnerComponent } from "../../../../components/loading-spinner/loading-spinner.component"
 @Component({
   selector: "app-dashboard",
   templateUrl: "./dashboard.component.html",

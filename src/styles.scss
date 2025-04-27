@@ -2,8 +2,10 @@
 @forward 'tailwindcss/components';
 @forward 'tailwindcss/utilities';
 
-
-
+.mat-option {
+    background-color: black;
+  }
+  
 // @include mat.core();
 
 // // 4. Define your color palettes
