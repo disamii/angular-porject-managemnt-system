@@ -79,13 +79,10 @@
           >
             <div *ngFor="let evaluator of evaluators.slice(0, 3)" class="flex items-center justify-between">
               <div>
-                <p class="font-medium">{{ evaluator.name }}</p>
+                <p class="font-medium">{{ evaluator.evaluator.name }}</p>
                 <p class="text-xs text-slate-500">{{ evaluator.expertise }}</p>
               </div>
-              <mat-chip [ngClass]="{
-                'bg-blue-100 text-blue-700': evaluator.type === 'INTERNAL',
-                'bg-purple-100 text-purple-700': evaluator.type === 'EXTERNAL'
-              }">{{ evaluator.type }}</mat-chip>
+ 
             </div>
           </app-evaluation-stats-widget>
         </div>

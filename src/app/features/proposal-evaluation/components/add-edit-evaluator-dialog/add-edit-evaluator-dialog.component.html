@@ -3,16 +3,7 @@
   
   <form [formGroup]="evaluatorForm" (ngSubmit)="onSubmit()">
     <div mat-dialog-content class="space-y-4">
-      <mat-form-field appearance="fill" class="w-full">
-        <mat-label>Evaluator Name</mat-label>
-        <input matInput formControlName="evaluatorName" placeholder="Enter evaluator name">
-        <mat-error *ngIf="evaluatorForm.get('evaluatorName')?.hasError('required')">
-          Evaluator name is required
-        </mat-error>
-        <mat-error *ngIf="evaluatorForm.get('evaluatorName')?.hasError('maxlength')">
-          Evaluator name cannot exceed 100 characters
-        </mat-error>
-      </mat-form-field>
+
 
       <mat-form-field appearance="fill" class="w-full" *ngIf="!data.isEdit">
         <mat-label>User ID</mat-label>

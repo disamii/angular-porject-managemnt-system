@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core"
 import { BehaviorSubject, type Observable, of } from "rxjs"
 import { delay, tap } from "rxjs/operators"
-import { User } from "./user.service"
+import { User } from "../../../../models/user.model"
 
 export interface AuthState {
   isAuthenticated: boolean

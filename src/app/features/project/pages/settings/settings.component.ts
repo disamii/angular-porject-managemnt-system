@@ -1,6 +1,5 @@
 import { Component, type OnInit } from "@angular/core"
 import {  FormBuilder, type FormGroup, Validators } from "@angular/forms"
-import type { User } from "../../models/user.model"
 import { NgModule } from "@angular/core"
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations"
 import { RouterModule } from "@angular/router"
@@ -41,6 +40,7 @@ import { MatGridListModule } from "@angular/material/grid-list"
 import { MatRippleModule } from "@angular/material/core"
 import { MatBottomSheetModule } from "@angular/material/bottom-sheet"
 import { CommonModule } from '@angular/common';  // Ensure CommonModule is imported
+import { User } from "../../../../../models/user.model"
 
 @Component({
   selector: "app-settings",

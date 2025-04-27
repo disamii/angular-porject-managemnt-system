@@ -29,7 +29,7 @@
         <mat-label>Evaluator</mat-label>
         <mat-select formControlName="evaluatorPublicId" required>
           <mat-option *ngFor="let evaluator of evaluators" [value]="evaluator.publicId">
-            {{ evaluator.name }} ({{ evaluator.expertise }})
+            {{ evaluator.evaluator.name }} ({{ evaluator.expertise }})
           </mat-option>
         </mat-select>
         <mat-error *ngIf="hasError('evaluatorPublicId', 'required')">

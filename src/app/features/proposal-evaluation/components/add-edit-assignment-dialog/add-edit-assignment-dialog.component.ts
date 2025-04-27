@@ -95,7 +95,7 @@ export class AddEditAssignmentDialogComponent implements OnInit {
     }).subscribe({
       next: (result) => {
         this.rubrics = result.rubrics.filter((r) => r.status === "ACTIVE")
-        this.evaluators = result.evaluators.filter((e) => e.isActive)
+        // this.evaluators = result.evaluators.filter((e) => e.isActive)
 
         // Mock data for proposals
         this.proposals = [

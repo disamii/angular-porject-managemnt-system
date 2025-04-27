@@ -21,7 +21,7 @@ import { Subject } from "rxjs"
 import { takeUntil, debounceTime, distinctUntilChanged } from "rxjs/operators"
 
 import  { EvaluatorService } from "../../services/evaluator.service"
-import  { EvaluatorResponse } from "../../models/evaluator.model"
+import  { EvaluatorRequest, EvaluatorResponse } from "../../models/evaluator.model"
 import  { NotificationService } from "../../services/notification.service"
 import { ConfirmDialogComponent } from "../../../../components/confirm-dialog/confirm-dialog.component"
 import { EvaluatorFormComponent } from "../../components/evaluator-form/evaluator-form.component"
@@ -57,10 +57,9 @@ export class EvaluatorManagementComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = [
     "name",
     "email",
-    "organization",
+    "academicDegreeLevel",
     "type",
     "expertise",
-    "status",
     "assignments",
     "actions",
   ]
@@ -71,7 +70,7 @@ export class EvaluatorManagementComponent implements OnInit, OnDestroy {
   statusFilter = new FormControl("")
 
   showAddForm = false
-  editingEvaluator: EvaluatorResponse | null = null
+  editingEvaluator: EvaluatorRequest | null = null
 
   @ViewChild(MatPaginator) paginator!: MatPaginator
   @ViewChild(MatSort) sort!: MatSort
@@ -141,10 +140,10 @@ export class EvaluatorManagementComponent implements OnInit, OnDestroy {
     if (searchTerm) {
       filtered = filtered.filter(
         (evaluator) =>
-          evaluator.name.toLowerCase().includes(searchTerm) ||
-          evaluator.email.toLowerCase().includes(searchTerm) ||
-          evaluator.organization.toLowerCase().includes(searchTerm) ||
-          evaluator.expertise.some((e) => e.toLowerCase().includes(searchTerm)),
+          evaluator.evaluator.name.toLowerCase().includes(searchTerm) ||
+          evaluator.evaluator.email.toLowerCase().includes(searchTerm) ||
+          evaluator.evaluator.academicDegreeLevel.toLowerCase().includes(searchTerm)||
+          evaluator.expertise.toLowerCase().includes(searchTerm),
       )
     }
 
@@ -154,16 +153,10 @@ export class EvaluatorManagementComponent implements OnInit, OnDestroy {
       filtered = filtered.filter((evaluator) => evaluator.type === typeFilter)
     }
 
-    // Apply status filter
-    const statusFilter = this.statusFilter.value
-    if (statusFilter !== null && statusFilter !== undefined) {
-      const isActive = statusFilter === "active"
-      filtered = filtered.filter((evaluator) => evaluator.isActive === isActive)
-    }
 
     this.filteredEvaluators = filtered
 
-    // Reset pagination when filters change
+    // // Reset pagination when filters change
     if (this.paginator) {
       this.paginator.firstPage()
     }
@@ -201,7 +194,7 @@ export class EvaluatorManagementComponent implements OnInit, OnDestroy {
       })
   }
 
-  editEvaluator(evaluator: EvaluatorResponse): void {
+  editEvaluator(evaluator: EvaluatorRequest): void {
     this.editingEvaluator = evaluator
     this.showAddForm = true
   }
@@ -210,7 +203,7 @@ export class EvaluatorManagementComponent implements OnInit, OnDestroy {
     if (!this.editingEvaluator) return
 
     this.evaluatorService
-      .updateEvaluator(this.editingEvaluator.publicId, evaluatorData)
+      .updateEvaluator(evaluatorData, evaluatorData)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
@@ -224,47 +217,14 @@ export class EvaluatorManagementComponent implements OnInit, OnDestroy {
       })
   }
 
-  toggleEvaluatorStatus(evaluator: EvaluatorResponse): void {
-    const newStatus = !evaluator.isActive
-    const action = newStatus ? "activate" : "deactivate"
 
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: "400px",
-      data: {
-        title: `${action.charAt(0).toUpperCase() + action.slice(1)} Evaluator`,
-        message: `Are you sure you want to ${action} ${evaluator.name}?`,
-        confirmText: "Yes",
-        cancelText: "No",
-      },
-    })
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.evaluatorService
-          .updateEvaluator(evaluator.publicId, {
-            ...evaluator,
-            isActive: newStatus,
-          })
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: () => {
-              this.notificationService.success(`Evaluator ${action}d successfully`)
-              this.loadEvaluators()
-            },
-            error: (error) => {
-              this.notificationService.error(`Failed to ${action} evaluator`)
-            },
-          })
-      }
-    })
-  }
 
   deleteEvaluator(evaluator: EvaluatorResponse): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: "400px",
       data: {
         title: "Delete Evaluator",
-        message: `Are you sure you want to delete ${evaluator.name}? This action cannot be undone.`,
+        message: `Are you sure you want to delete ${evaluator.evaluator.name}? This action cannot be undone.`,
         confirmText: "Delete",
         cancelText: "Cancel",
         confirmColor: "warn",

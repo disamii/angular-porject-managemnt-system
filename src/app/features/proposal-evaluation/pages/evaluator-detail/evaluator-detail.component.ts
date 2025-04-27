@@ -21,7 +21,7 @@ import { takeUntil } from "rxjs/operators"
 
 import  { EvaluatorService } from "../../services/evaluator.service"
 import { AddEditEvaluatorDialogComponent } from "../../components/add-edit-evaluator-dialog/add-edit-evaluator-dialog.component"
-import  { EvaluatorDetailResponse, EvaluatorStats } from "../../models/evaluator.model"
+import  { EvaluatorResponse,  } from "../../models/evaluator.model"
 import  { NotificationService } from "../../services/notification.service"
 import { ConfirmDialogComponent } from "../../../../components/confirm-dialog/confirm-dialog.component"
 
@@ -51,8 +51,7 @@ import { ConfirmDialogComponent } from "../../../../components/confirm-dialog/co
 })
 export class EvaluatorDetailComponent implements OnInit, OnDestroy {
   evaluatorId!: string
-  evaluator!: EvaluatorDetailResponse
-  stats!: EvaluatorStats
+  evaluator!: EvaluatorResponse
   loading = true
   error = false
 
@@ -89,7 +88,6 @@ export class EvaluatorDetailComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (evaluator) => {
           this.evaluator = evaluator!
-          this.loadStats()
         },
         error: (err) => {
           this.error = true
@@ -100,22 +98,7 @@ export class EvaluatorDetailComponent implements OnInit, OnDestroy {
       })
   }
 
-  loadStats(): void {
-    this.evaluatorService
-      .getEvaluatorStats(this.evaluatorId)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (stats) => {
-          this.stats = stats
-          this.loading = false
-        },
-        error: (err) => {
-          this.error = true
-          this.loading = false
-          this.notificationService.error("Failed to load evaluator statistics")
-        },
-      })
-  }
+
 
   editEvaluator(): void {
     const dialogRef = this.dialog.open(AddEditEvaluatorDialogComponent, {
@@ -124,12 +107,11 @@ export class EvaluatorDetailComponent implements OnInit, OnDestroy {
         mode: "edit",
         evaluator: {
           id: this.evaluator.publicId,
-          name: this.evaluator.name,
-          email: this.evaluator.email,
-          organization: this.evaluator.organization,
+          name: this.evaluator.evaluator.name,
+          email: this.evaluator.evaluator.email,
+          organization: this.evaluator.evaluator.academicDegreeLevel,
           type: this.evaluator.type,
           expertise: this.evaluator.expertise,
-          isActive: this.evaluator.isActive,
         },
       },
     })
@@ -152,40 +134,7 @@ export class EvaluatorDetailComponent implements OnInit, OnDestroy {
     })
   }
 
-  toggleStatus(): void {
-    const newStatus = !this.evaluator.isActive
-    const action = newStatus ? "activate" : "deactivate"
 
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: "400px",
-      data: {
-        title: `${action.charAt(0).toUpperCase() + action.slice(1)} Evaluator`,
-        message: `Are you sure you want to ${action} this evaluator?`,
-        confirmText: "Yes",
-        cancelText: "No",
-      },
-    })
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.evaluatorService
-          .updateEvaluator(this.evaluatorId, {
-            ...this.evaluator,
-            isActive: newStatus,
-          })
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: () => {
-              this.notificationService.success(`Evaluator ${action}d successfully`)
-              this.loadEvaluator()
-            },
-            error: (err) => {
-              this.notificationService.error(`Failed to ${action} evaluator`)
-            },
-          })
-      }
-    })
-  }
 
   deleteEvaluator(): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {

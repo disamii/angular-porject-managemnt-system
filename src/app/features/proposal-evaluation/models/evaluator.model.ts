@@ -1,48 +1,34 @@
+// evaluator.model.ts
+
+export interface UserInfo {
+  id:number,
+  name: string;
+  userName: string;
+  phoneNumber?: string;  // optional
+  email: string;
+  researchInterests: string;
+  academicPosition: string;
+  academicDegreeLevel: string;
+  fieldOfStudy: string;
+}
 export interface EvaluatorBase {
-  name: string
-  email: string
-  organization: string
-  type: "INTERNAL" | "EXTERNAL" | "SUBJECT_MATTER_EXPERT"
-  expertise: string[]
-  isActive: boolean
+  expertise: string;
+  maxAssignments: number;
+  type: "DOCUMENT_REVIEWER" | "PRESENTATION_REVIEWER";
+  evaluatorName: string; 
 }
 
 export interface EvaluatorRequest extends EvaluatorBase {
-  id?: number
+
+  userId: number;  // Reference to an existing user by their ID
 }
 
 export interface EvaluatorResponse extends EvaluatorBase {
-  id: number
-  publicId: string
-  createdAt: Date
-  updatedAt: Date
-  assignmentCount: number
-  completedAssignmentCount: number
-}
-
-export interface EvaluatorDetailResponse extends EvaluatorResponse {
-  averageScore: number
-  averageCompletionTime: number // in days
-  onTimePercentage: number
-  recentAssignments: {
-    id: string
-    proposalTitle: string
-    status: string
-    dueDate: Date
-    assignedDate: Date
-    completedDate?: Date
-  }[]
-  expertiseAreas: {
-    name: string
-    count: number
-  }[]
-}
-
-export interface EvaluatorStats {
-  totalAssignments: number
-  completedAssignments: number
-  pendingAssignments: number
-  averageScore: number
-  averageCompletionTime: number // in days
-  onTimePercentage: number
+  id: number;
+  publicId: string;
+  evaluator: UserInfo; 
+  createdAt: Date;
+  updatedAt: Date;
+  assignmentCount: number;
+  completedAssignmentCount: number;
 }

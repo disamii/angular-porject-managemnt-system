@@ -1,8 +1,8 @@
 import { Component, Inject, type OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
-import {  FormBuilder,  FormGroup, ReactiveFormsModule, Validators } from "@angular/forms"
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms"
 import { MatButtonModule } from "@angular/material/button"
-import { MatDialogModule,  MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog"
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog"
 import { MatFormFieldModule } from "@angular/material/form-field"
 import { MatInputModule } from "@angular/material/input"
 import { MatSelectModule } from "@angular/material/select"
@@ -11,8 +11,7 @@ import { MatTooltipModule } from "@angular/material/tooltip"
 import { MatSlideToggleModule } from "@angular/material/slide-toggle"
 import { MatChipsModule } from "@angular/material/chips"
 import { MatAutocompleteModule } from "@angular/material/autocomplete"
-
-import type { EvaluatorResponse, EvaluatorRequest } from "../../models/evaluator.model"
+import type { EvaluatorRequest, EvaluatorResponse } from "../../models/evaluator.model"
 
 export interface AddEditEvaluatorDialogData {
   evaluator?: EvaluatorResponse
@@ -47,24 +46,23 @@ export class AddEditEvaluatorDialogComponent implements OnInit {
     { value: "INTERNAL", label: "Internal" },
     { value: "EXTERNAL", label: "External" },
     { value: "SUBJECT_MATTER_EXPERT", label: "Subject Matter Expert" },
-  ];
+  ]
 
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<AddEditEvaluatorDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: AddEditEvaluatorDialogData
   ) {
-    this.dialogTitle = data.isEdit ? "Edit Evaluator" : "Add New Evaluator";
-    this.submitButtonText = data.isEdit ? "Update" : "Create";
-    
+    this.dialogTitle = data.isEdit ? "Edit Evaluator" : "Add New Evaluator"
+    this.submitButtonText = data.isEdit ? "Update" : "Create"
+
     this.evaluatorForm = this.fb.group({
-      name: ["", [Validators.required, Validators.maxLength(100)]],
-      email: ["", [Validators.required, Validators.email]],
-      organization: ["", Validators.required],
-      type: ["", Validators.required],
+      evaluatorName: ["", [Validators.required, Validators.maxLength(100)]],
+      userId: [null, Validators.required],
+      maxAssignments: [1, [Validators.required, Validators.min(1)]],
       expertise: [[], Validators.required],
-      isActive: [true]
-    });
+      type: ["DOCUMENT_REVIEWER", Validators.required],  // Fixed type as DOCUMENT_REVIEWER
+    })
   }
 
   ngOnInit(): void {
@@ -74,12 +72,11 @@ export class AddEditEvaluatorDialogComponent implements OnInit {
   initForm(): void {
     if (this.data.evaluator) {
       this.evaluatorForm.patchValue({
-        name: this.data.evaluator.name,
-        email: this.data.evaluator.email,
-        organization: this.data.evaluator.organization,
-        type: this.data.evaluator.type,
+        evaluatorName: this.data.evaluator.evaluatorName,
+        userId: this.data.evaluator.evaluator.id,  // Ensure userId is patched
+        maxAssignments: this.data.evaluator.maxAssignments,
         expertise: this.data.evaluator.expertise,
-        isActive: this.data.evaluator.isActive,
+        type: this.data.evaluator.type,
       })
     }
   }
@@ -93,23 +90,20 @@ export class AddEditEvaluatorDialogComponent implements OnInit {
 
     if (this.data.isEdit && this.data.evaluator) {
       const updateRequest: EvaluatorRequest = {
-        id: this.data.evaluator.id,
-        name: formValue.name,
-        email: formValue.email,
-        organization: formValue.organization,
-        type: formValue.type,
+        evaluatorName: formValue.evaluatorName,
+        userId: formValue.userId,
+        maxAssignments: formValue.maxAssignments,
         expertise: formValue.expertise,
-        isActive: formValue.isActive,
+        type: formValue.type,
       }
       this.dialogRef.close(updateRequest)
     } else {
       const createRequest: EvaluatorRequest = {
-        name: formValue.name,
-        email: formValue.email,
-        organization: formValue.organization,
-        type: formValue.type,
+        evaluatorName: formValue.evaluatorName,
+        userId: formValue.userId,
+        maxAssignments: formValue.maxAssignments,
         expertise: formValue.expertise,
-        isActive: formValue.isActive,
+        type: formValue.type,
       }
       this.dialogRef.close(createRequest)
     }

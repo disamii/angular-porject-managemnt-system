@@ -7,7 +7,7 @@ import { MatIconModule } from "@angular/material/icon"
 import { MatMenuModule } from "@angular/material/menu"
 import { CommonModule } from '@angular/common';  
 import { MatButtonModule } from "@angular/material/button"
-import { User } from "../../features/users/user.model"
+import { User } from "../../../models/user.model"
 import { AuthService } from "../../features/project/services/auth.service"
 import { ThemeService } from "../../features/project/services/theme.service"
 @Component({
