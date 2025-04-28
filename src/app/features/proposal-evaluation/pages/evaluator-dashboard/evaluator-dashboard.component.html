@@ -1,0 +1,136 @@
+<div class="py-8">
+    <div class="container mx-auto px-4">
+      <!-- Loading state -->
+      <div *ngIf="loading" class="flex justify-center items-center py-12">
+        <mat-spinner diameter="40"></mat-spinner>
+        <span class="ml-4 text-slate-600">Loading your assignments...</span>
+      </div>
+  
+      <div *ngIf="!loading && dashboardData">
+        <!-- Header with user info -->
+        <div class="mb-8">
+          <h1 class="text-3xl font-bold mb-2">Evaluator Dashboard</h1>
+          <div class="flex flex-col md:flex-row md:items-center gap-2">
+            <div class="bg-purple-50 rounded-lg px-4 py-2 inline-flex items-center">
+              <mat-icon class="text-purple-600 mr-2">person</mat-icon>
+              <span class="font-medium">{{ dashboardData.user.fullName }}</span>
+            </div>
+            <div class="bg-blue-50 rounded-lg px-4 py-2 inline-flex items-center">
+              <mat-icon class="text-blue-600 mr-2">school</mat-icon>
+              <span>{{ dashboardData.user.expertise }}</span>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Assignments tabs -->
+        <mat-tab-group animationDuration="0ms" class="mb-8">
+          <!-- Pending Assignments Tab -->
+          <mat-tab label="Pending Assignments ({{ pendingAssignments.length }})">
+            <div class="py-6">
+              <div *ngIf="pendingAssignments.length === 0" class="text-center py-8">
+                <mat-icon class="text-slate-400 text-5xl mb-4">check_circle</mat-icon>
+                <p class="text-slate-600 mb-2">No pending assignments</p>
+                <p class="text-sm text-slate-500">You have completed all your assigned evaluations.</p>
+              </div>
+  
+              <div *ngIf="pendingAssignments.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <mat-card *ngFor="let assignment of pendingAssignments" class="border border-slate-200 hover:border-purple-200 hover:shadow-md transition-all">
+                  <mat-card-content class="p-6">
+                    <div class="flex justify-between items-start mb-4">
+                      <mat-chip [ngClass]="getStatusClass(assignment.status)">{{ assignment.status }}</mat-chip>
+                      <div *ngIf="assignment.dueDate" 
+                           [ngClass]="{'text-red-600 font-medium': isOverdue(assignment.dueDate), 'text-slate-600': !isOverdue(assignment.dueDate)}" 
+                           class="text-sm">
+                        <span *ngIf="isOverdue(assignment.dueDate)">Overdue by {{ Math.abs(getDaysRemaining(assignment.dueDate)) }} days</span>
+                        <span *ngIf="!isOverdue(assignment.dueDate)">Due in {{ getDaysRemaining(assignment.dueDate) }} days</span>
+                      </div>
+                    </div>
+  
+                    <h3 class="font-bold text-lg mb-2">{{ assignment.proposal.title }}</h3>
+                    <p class="text-sm text-slate-600 mb-4">{{ assignment.proposal.principalInvestigator }} - {{ assignment.proposal.organization }}</p>
+  
+                    <div class="mb-4">
+                      <div class="flex justify-between text-sm mb-1">
+                        <span>Progress</span>
+                        <span>{{ calculateProgress(assignment) }}%</span>
+                      </div>
+                      <mat-progress-bar 
+                        mode="determinate" 
+                        [value]="calculateProgress(assignment)" 
+                        [color]="assignment.status === 'IN_PROGRESS' ? 'accent' : 'primary'">
+                      </mat-progress-bar>
+                    </div>
+  
+                    <div class="flex justify-between items-center">
+                      <div class="text-sm text-slate-500">
+                        Assigned: {{ assignment.assignedDate | date:'mediumDate' }}
+                      </div>
+                      <button 
+                        mat-flat-button 
+                        color="primary" 
+                        class="bg-gradient-to-r from-purple-600 to-indigo-600"
+                        [routerLink]="['/evaluation/evaluate', assignment.assignmentId]">
+                        {{ assignment.status === 'NOT_STARTED' ? 'Start Evaluation' : 'Continue Evaluation' }}
+                      </button>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            </div>
+          </mat-tab>
+  
+          <!-- Completed Assignments Tab -->
+          <mat-tab label="Completed Assignments ({{ completedAssignments.length }})">
+            <div class="py-6">
+              <div *ngIf="completedAssignments.length === 0" class="text-center py-8">
+                <mat-icon class="text-slate-400 text-5xl mb-4">assignment</mat-icon>
+                <p class="text-slate-600 mb-2">No completed assignments</p>
+                <p class="text-sm text-slate-500">You haven't completed any evaluations yet.</p>
+              </div>
+  
+              <div *ngIf="completedAssignments.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <mat-card *ngFor="let assignment of completedAssignments" class="border border-slate-200">
+                  <mat-card-content class="p-6">
+                    <div class="flex justify-between items-start mb-4">
+                      <mat-chip class="bg-green-100 text-green-700">COMPLETED</mat-chip>
+                      <div class="text-sm text-slate-600">
+                        Completed: {{ assignment.completedDate | date:'mediumDate' }}
+                      </div>
+                    </div>
+  
+                    <h3 class="font-bold text-lg mb-2">{{ assignment.proposal.title }}</h3>
+                    <p class="text-sm text-slate-600 mb-4">{{ assignment.proposal.principalInvestigator }} - {{ assignment.proposal.organization }}</p>
+  
+                    <div class="mb-4">
+                      <div class="flex justify-between text-sm mb-1">
+                        <span>Progress</span>
+                        <span>100%</span>
+                      </div>
+                      <mat-progress-bar 
+                        mode="determinate" 
+                        [value]="100" 
+                        color="primary">
+                      </mat-progress-bar>
+                    </div>
+  
+                    <div class="flex justify-between items-center">
+                      <div class="text-sm text-slate-500">
+                        Assigned: {{ assignment.assignedDate | date:'mediumDate' }}
+                      </div>
+                      <button 
+                        mat-stroked-button 
+                        color="primary"
+                        [routerLink]="['/evaluation/evaluate', assignment.assignmentId]">
+                        View Evaluation
+                      </button>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+    </div>
+  </div>
+  

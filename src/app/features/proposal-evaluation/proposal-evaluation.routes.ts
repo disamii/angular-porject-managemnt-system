@@ -13,6 +13,18 @@ export const PROPOSAL_EVALUATION_ROUTES: Routes = [
     title: "Evaluation Dashboard",
   },
   {
+    path: "evaluator-dashboard",
+    loadComponent: () =>
+      import("./pages/evaluator-dashboard/evaluator-dashboard.component").then((c) => c.EvaluatorDashboardComponent),
+    title: "Evaluator Dashboard",
+  },
+  {
+    path: "evaluate/:id",
+    loadComponent: () =>
+      import("./pages/proposal-evaluation/proposal-evaluation.component").then((c) => c.ProposalEvaluationComponent),
+    title: "Evaluate Proposal",
+  },
+  {
     path: "assignments",
     loadComponent: () =>
       import("./pages/assignment-management/assignment-management.component").then(

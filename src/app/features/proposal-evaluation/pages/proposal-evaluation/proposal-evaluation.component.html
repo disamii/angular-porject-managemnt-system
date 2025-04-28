@@ -1,0 +1,180 @@
+<div class="evaluation-container  flex flex-col">
+    <!-- Loading state -->
+    <div *ngIf="loading" class="flex-grow flex justify-center items-center">
+      <mat-spinner diameter="40"></mat-spinner>
+      <span class="ml-4 text-slate-600">Loading evaluation data...</span>
+    </div>
+  
+    <div *ngIf="!loading && assignment" class="flex-grow flex flex-col">
+      <!-- Header -->
+      <div class="bg-white border-b border-slate-200 py-4 px-6 flex justify-between items-center">
+        <div class="flex items-center">
+          <button mat-icon-button [routerLink]="['/evaluation/evaluator-dashboard']" matTooltip="Back to Dashboard">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+          <div class="ml-2">
+            <h1 class="text-xl font-bold">{{ assignment.proposal.title }}</h1>
+            <p class="text-sm text-slate-600">{{ assignment.proposal.principalInvestigator }} - {{ assignment.proposal.organization }}</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <mat-chip [ngClass]="{
+            'bg-slate-100 text-slate-700': assignment.status === 'NOT_STARTED',
+            'bg-amber-100 text-amber-700': assignment.status === 'IN_PROGRESS',
+            'bg-green-100 text-green-700': assignment.status === 'COMPLETED'
+          }">{{ assignment.status }}</mat-chip>
+          
+          <button mat-icon-button (click)="togglePdfPanel()" matTooltip="Toggle PDF Panel">
+            <mat-icon>{{ showPdfPanel ? 'chrome_reader_mode' : 'description' }}</mat-icon>
+          </button>
+        </div>
+      </div>
+  
+      <!-- Main content area with side-by-side layout -->
+      <div class="flex-grow flex overflow-hidden">
+        <!-- PDF Panel (left side) -->
+        <div *ngIf="showPdfPanel" class="w-1/2 border-r border-slate-200 overflow-hidden">
+          <div *ngIf="pdfUrl" class="h-full">
+            <iframe [src]="pdfUrl" class="w-full h-full" frameborder="0"></iframe>
+          </div>
+          <div *ngIf="!pdfUrl" class="h-full flex justify-center items-center bg-slate-50">
+            <div class="text-center p-8">
+              <mat-icon class="text-5xl text-slate-400 mb-4">description_off</mat-icon>
+              <p class="text-slate-600 mb-2">PDF document not available</p>
+              <p class="text-sm text-slate-500">The proposal document could not be loaded.</p>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Evaluation Form (right side) -->
+        <div [ngClass]="{'w-1/2': showPdfPanel, 'w-full': !showPdfPanel}" class="overflow-auto">
+          <div class="p-6">
+            <div class="mb-6">
+              <div class="flex justify-between items-center mb-2">
+                <h2 class="text-xl font-bold">Evaluation Form</h2>
+                <div class="flex items-center">
+                  <span class="text-sm text-slate-600 mr-2">Progress: {{ calculateProgress() }}%</span>
+                  <mat-progress-bar 
+                    mode="determinate" 
+                    [value]="calculateProgress()" 
+                    [color]="assignment.status === 'COMPLETED' ? 'primary' : 'accent'"
+                    class="w-32">
+                  </mat-progress-bar>
+                </div>
+              </div>
+              <p class="text-sm text-slate-600">{{ assignment.rubric.name }} (v{{ assignment.rubric.version }})</p>
+            </div>
+  
+            <form [formGroup]="evaluationForm" (ngSubmit)="submitEvaluation()">
+              <div formArrayName="criteria" class="space-y-6">
+                <mat-card *ngFor="let criterionControl of criteriaFormArray.controls; let i = index" class="border border-slate-200">
+                  <mat-card-content class="p-6">
+                    <div [formGroupName]="i">
+                      <div class="flex justify-between items-start mb-4">
+                        <div>
+                          <h3 class="text-lg font-medium">{{ criterionControl.get('criterionName')?.value }}</h3>
+                          <div class="flex items-center mt-1">
+                            <mat-chip class="text-xs">Max: {{ criterionControl.get('maxScore')?.value }} points</mat-chip>
+                            <mat-chip *ngIf="criterionControl.get('scoreType')?.value === 'CONDITIONAL_SCORE'" class="ml-2 text-xs bg-amber-100 text-amber-700">
+                              Conditional
+                            </mat-chip>
+                          </div>
+                        </div>
+                        <div class="text-2xl font-bold" [style.color]="getScoreColor(criterionControl.get('awardedScore')?.value, criterionControl.get('maxScore')?.value)">
+                          {{ criterionControl.get('awardedScore')?.value || 0 }}/{{ criterionControl.get('maxScore')?.value }}
+                        </div>
+                      </div>
+  
+                      <!-- Condition (if applicable) -->
+                      <div *ngIf="criterionControl.get('conditionDescription')?.value" class="mb-4 p-3 bg-amber-50 border border-amber-100 rounded-md">
+                        <p class="text-sm text-amber-800 font-medium">Condition:</p>
+                        <p class="text-sm text-amber-700">{{ criterionControl.get('conditionDescription')?.value }}</p>
+                        
+                        <mat-checkbox 
+                          formControlName="conditionMet" 
+                          class="mt-2" 
+                          [disabled]="assignment.status === 'COMPLETED'">
+                          Condition is met
+                        </mat-checkbox>
+                      </div>
+  
+                      <!-- Score slider -->
+                      <div class="mb-4">
+                        <label class="text-sm text-slate-600 mb-2 block">Score:</label>
+                        <mat-slider
+                          [min]="0"
+                          [max]="criterionControl.get('maxScore')?.value"
+                          [step]="1"
+                          [discrete]="true"
+                          [disabled]="assignment.status === 'COMPLETED'"
+                          class="w-full">
+                          <input matSliderThumb formControlName="awardedScore">
+                        </mat-slider>
+                      </div>
+  
+                      <!-- Comments -->
+                      <mat-form-field appearance="fill" class="w-full">
+                        <mat-label>Comments</mat-label>
+                        <textarea 
+                          matInput 
+                          formControlName="comments" 
+                          rows="4" 
+                          placeholder="Enter your comments for this criterion..."
+                          [disabled]="assignment.status === 'COMPLETED'">
+                        </textarea>
+                        <mat-hint align="end">
+                          {{ criterionControl.get('comments')?.value?.length || 0 }}/1000
+                        </mat-hint>
+                        <mat-error *ngIf="criterionControl.get('comments')?.hasError('maxlength')">
+                          Comments cannot exceed 1000 characters
+                        </mat-error>
+                      </mat-form-field>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+  
+              <!-- Action buttons -->
+              <div class="sticky bottom-0 bg-white border-t border-slate-200 p-4 mt-6 flex justify-between items-center">
+                <div>
+                  <span *ngIf="saving" class="text-blue-600 flex items-center">
+                    <mat-spinner diameter="16" class="mr-2"></mat-spinner>
+                    Saving...
+                  </span>
+                </div>
+                <div class="flex gap-3">
+                  <button 
+                    mat-stroked-button 
+                    type="button" 
+                    [routerLink]="['/evaluation/evaluator-dashboard']"
+                    [disabled]="submitting">
+                    Cancel
+                  </button>
+                  <button 
+                    mat-stroked-button 
+                    color="primary" 
+                    type="button" 
+                    (click)="saveProgress()"
+                    [disabled]="evaluationForm.pristine || saving || submitting || assignment.status === 'COMPLETED'">
+                    <mat-icon>save</mat-icon>
+                    Save Progress
+                  </button>
+                  <button 
+                    mat-flat-button 
+                    color="primary" 
+                    type="submit"
+                    [disabled]="submitting || assignment.status === 'COMPLETED'"
+                    class="bg-gradient-to-r from-purple-600 to-indigo-600">
+                    <mat-icon>send</mat-icon>
+                    Submit Evaluation
+                    <mat-spinner *ngIf="submitting" diameter="16" class="ml-2"></mat-spinner>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
