@@ -17,7 +17,6 @@ export class EvaluatorService {
     {
       id: 1,
       publicId: "eval-1",
-      evaluatorName: "John Smith",
       expertise: "Machine Learning",
       maxAssignments: 5,
       type: "DOCUMENT_REVIEWER",
@@ -31,15 +30,12 @@ export class EvaluatorService {
         academicDegreeLevel: "PhD",
         fieldOfStudy: "Computer Science",
       },
-      createdAt: new Date("2023-01-15"),
-      updatedAt: new Date("2023-06-20"),
-      assignmentCount: 12,
-      completedAssignmentCount: 10,
+   
+
     },
     {
       id: 2,
       publicId: "eval-2",
-      evaluatorName: "Jane Doe",
       expertise: "Data Science",
       maxAssignments: 3,
       type: "DOCUMENT_REVIEWER",
@@ -53,10 +49,7 @@ export class EvaluatorService {
         academicDegreeLevel: "Master's",
         fieldOfStudy: "Data Science",
       },
-      createdAt: new Date("2023-02-10"),
-      updatedAt: new Date("2023-07-05"),
-      assignmentCount: 8,
-      completedAssignmentCount: 7,
+
     },
   ]
 
@@ -105,10 +98,8 @@ export class EvaluatorService {
       id: this.mockEvaluators.length + 1,
       publicId: `eval-${this.mockEvaluators.length + 1}`,
       ...evaluator,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      assignmentCount: 0,
-      completedAssignmentCount: 0,
+     
+ 
       evaluator:{
         id:3,
         name: "Jane gira",

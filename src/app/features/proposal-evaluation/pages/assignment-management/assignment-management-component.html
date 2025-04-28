@@ -52,19 +52,19 @@
               <!-- Proposal Title Column -->
               <ng-container matColumnDef="proposalTitle">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Proposal Title</th>
-                <td mat-cell *matCellDef="let assignment">{{ assignment.proposalTitle }}</td>
+                <td mat-cell *matCellDef="let assignment">{{ assignment.proposal.title }}</td>
               </ng-container>
 
               <!-- Evaluator Name Column -->
               <ng-container matColumnDef="evaluatorName">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Evaluator</th>
-                <td mat-cell *matCellDef="let assignment">{{ assignment.evaluatorName }}</td>
+                <td mat-cell *matCellDef="let assignment">{{ assignment.evaluator.fullName }}</td>
               </ng-container>
 
               <!-- Rubric Name Column -->
               <ng-container matColumnDef="rubricName">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Rubric</th>
-                <td mat-cell *matCellDef="let assignment">{{ assignment.rubricName }}</td>
+                <td mat-cell *matCellDef="let assignment">{{ assignment.rubric.name }}</td>
               </ng-container>
 
               <!-- Status Column -->

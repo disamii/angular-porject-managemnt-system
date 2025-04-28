@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core"
 import { type Observable, of } from "rxjs"
 import { delay } from "rxjs/operators"
-import type { AssignmentRequest, AssignmentResponse, AssignmentUpdateRequest } from "../models/assignment.model"
+import type { AssignmentRequest, AssignmentResponse, } from "../models/assignment.model"
 
 @Injectable({
   providedIn: "root",
@@ -10,131 +10,158 @@ export class EvaluationAssignmentService {
   private baseUrl = "/api/assignments" // Base URL for the API
 
   // Centralized mock data
-  private mockAssignments: AssignmentResponse[] = [
-    {
-      id: 1,
-      publicId: "assignment-1",
-      proposalId: "proposal-1",
-      proposalTitle: "Research Grant Proposal",
-      evaluatorPublicId: "evaluator-1",
-      evaluatorName: "Dr. Jane Smith",
-      rubricPublicId: "rubric-1",
-      rubricName: "Research Grant Evaluation",
-      status: "NOT_STARTED",
-      totalScore: 0,
-      assignedDate: "2025-04-24T22:18:04.250Z",
-      dueDate: "2025-05-15T22:18:04.250Z",
-      completedDate: "",
-      notes: "Please complete by the due date",
-      evaluationType: "DOCUMENT_REVIEW",
-      scores: [
-        {
-          id: 1,
-          publicId: "score-1",
-          assignmentPublicId: 1,
-          criteriaId: 1,
-          awardedScore: 0,
-          maxScore: 10,
-          conditionMet: true,
-          comments: "",
-          criteriaName: "Research Methodology",
-        },
-        {
-          id: 2,
-          publicId: "score-2",
-          assignmentPublicId: 1,
-          criteriaId: 2,
-          awardedScore: 0,
-          maxScore: 10,
-          conditionMet: true,
-          comments: "",
-          criteriaName: "Innovation",
-        },
-      ],
+ 
+private mockAssignments: AssignmentResponse[] = [
+  {
+    id: 1,
+    publicId: "ASSGN-2024-001",
+    evaluator: {
+      id: 5,
+      publicId: "USR-8392",
+      fullName: "Dr. Samson Mamuye",
+      email: "samson@example.com",
+      role: "EVALUATOR",
+      expertise: "AI, Biomedical Engineering"
     },
-    {
-      id: 2,
-      publicId: "assignment-2",
-      proposalId: "proposal-2",
-      proposalTitle: "Technology Innovation Project",
-      evaluatorPublicId: "evaluator-2",
-      evaluatorName: "Prof. John Davis",
-      rubricPublicId: "rubric-2",
-      rubricName: "Technology Innovation Evaluation",
-      status: "IN_PROGRESS",
-      totalScore: 15,
-      assignedDate: "2025-04-20T22:19:27.905Z",
-      dueDate: "2025-05-10T22:19:27.905Z",
-      completedDate: "",
-      notes: "Focus on technical feasibility",
-      evaluationType: "PRESENTATION_REVIEW",
-      scores: [
-        {
-          id: 3,
-          publicId: "score-3",
-          assignmentPublicId: 2,
-          criteriaId: 3,
-          awardedScore: 8,
-          maxScore: 10,
-          conditionMet: true,
-          comments: "Good technical approach",
-          criteriaName: "Technical Feasibility",
-        },
-        {
-          id: 4,
-          publicId: "score-4",
-          assignmentPublicId: 2,
-          criteriaId: 4,
-          awardedScore: 7,
-          maxScore: 10,
-          conditionMet: true,
-          comments: "Innovative but needs refinement",
-          criteriaName: "Innovation Level",
-        },
-      ],
+    proposal: {
+      id: 30,
+      publicId: "PROP-ABC-2024",
+      title: "Smart Healthcare System using AI",
+      principalInvestigator: "Prof. Helen Getachew",
+      organization: "Bahir Dar University"
     },
-    {
-      id: 3,
-      publicId: "assignment-3",
-      proposalId: "proposal-3",
-      proposalTitle: "Community Development Initiative",
-      evaluatorPublicId: "evaluator-3",
-      evaluatorName: "Dr. Sarah Johnson",
-      rubricPublicId: "rubric-1",
-      rubricName: "Research Grant Evaluation",
-      status: "COMPLETED",
-      totalScore: 42,
-      assignedDate: "2025-04-15T10:30:00.000Z",
-      dueDate: "2025-05-01T10:30:00.000Z",
-      completedDate: "2025-04-28T14:45:00.000Z",
-      notes: "Community impact is a key factor",
-      evaluationType: "DOCUMENT_REVIEW",
-      scores: [
-        {
-          id: 5,
-          publicId: "score-5",
-          assignmentPublicId: 3,
-          criteriaId: 5,
-          awardedScore: 9,
-          maxScore: 10,
-          conditionMet: true,
-          comments: "Excellent community engagement plan",
-          criteriaName: "Community Impact",
-        },
-        {
-          id: 6,
-          publicId: "score-6",
-          assignmentPublicId: 3,
-          criteriaId: 6,
-          awardedScore: 8,
-          maxScore: 10,
-          conditionMet: true,
-          comments: "Good budget allocation",
-          criteriaName: "Budget Appropriateness",
-        },
-      ],
+    rubric: {
+      id: 7,
+      name: "NSF 2024 Research Evaluation Rubric",
+      version: "1.0",
+      documentPassingScore: 50,
+      presentationPassingScore: 50
     },
-  ]
+    status: "IN_PROGRESS",
+    totalScore: 15,
+    assignedDate: "2025-04-25T10:00:00Z",
+    completedDate: "",
+    notes: "Initial review completed, awaiting detailed analysis.",
+    scores: [
+      {
+        criterionId: 101,
+        criterionName: "Feasibility",
+        maxScore: 15,
+        awardedScore: 13,
+        comments: "Very realistic plan, minor risks."
+      },
+      {
+        criterionId: 102,
+        criterionName: "Timeline Realism",
+        maxScore: 10,
+        awardedScore: 8,
+        comments: "Timeline achievable with minor adjustments.",
+        conditionDescription: "Timeline is feasible if resources are available."
+      }
+    ]
+  },
+  {
+    id: 2,
+    publicId: "ASSGN-2024-002",
+    evaluator: {
+      id: 6,
+      publicId: "USR-8393",
+      fullName: "Prof. Selam Tadesse",
+      email: "selam@example.com",
+      role: "EVALUATOR",
+      expertise: "Renewable Energy, Power Systems"
+    },
+    proposal: {
+      id: 32,
+      publicId: "PROP-XYZ-2024",
+      title: "Solar Microgrid Deployment",
+      principalInvestigator: "Dr. Markos Bekele",
+      organization: "Addis Ababa University"
+    },
+    rubric: {
+      id: 8,
+      name: "Energy Research Rubric 2024",
+      version: "2.0",
+      documentPassingScore: 55,
+      presentationPassingScore: 60
+    },
+    status: "NOT_STARTED",
+    totalScore: 0,
+    assignedDate: "2025-04-26T12:00:00Z",
+    completedDate: "",
+    notes: "",
+    scores: []
+  },
+  {
+    id: 3,
+    publicId: "ASSGN-2024-003",
+    evaluator: {
+      id: 7,
+      publicId: "USR-8394",
+      fullName: "Dr. Alex Wondimu",
+      email: "alex@example.com",
+      role: "EVALUATOR",
+      expertise: "Data Science, Machine Learning"
+    },
+    proposal: {
+      id: 33,
+      publicId: "PROP-DEF-2024",
+      title: "AI-driven Environmental Monitoring System",
+      principalInvestigator: "Dr. Solomon Abebe",
+      organization: "Jimma University"
+    },
+    rubric: {
+      id: 9,
+      name: "AI Research Rubric 2024",
+      version: "1.2",
+      documentPassingScore: 60,
+      presentationPassingScore: 65
+    },
+    status: "COMPLETED",
+    totalScore: 85,
+    assignedDate: "2025-04-27T09:00:00Z",
+    completedDate: "2025-04-28T10:00:00Z",
+    notes: "Evaluation completed successfully, highly innovative.",
+    scores: [
+      {
+        criterionId: 103,
+        criterionName: "Innovation",
+        maxScore: 30,
+        awardedScore: 28,
+        comments: "The proposed system shows high potential for environmental impact."
+      },
+      {
+        criterionId: 104,
+        criterionName: "Scalability",
+        maxScore: 20,
+        awardedScore: 18,
+        comments: "Can be scaled with minimal modifications."
+      },
+      {
+        criterionId: 105,
+        criterionName: "Technical Feasibility",
+        maxScore: 20,
+        awardedScore: 19,
+        comments: "Technically sound, though challenges with hardware integration may arise."
+      },
+      {
+        criterionId: 106,
+        criterionName: "Sustainability",
+        maxScore: 15,
+        awardedScore: 15,
+        comments: "Sustainability features well integrated into the proposal."
+      },
+      {
+        criterionId: 107,
+        criterionName: "Presentation Quality",
+        maxScore: 15,
+        awardedScore: 14,
+        comments: "Presentation was clear, but could use more detailed diagrams."
+      }
+    ]
+  }
+];
+
 
   // constructor(private http: HttpClient) {}
 
@@ -160,7 +187,7 @@ export class EvaluationAssignmentService {
    */
   updateAssignmentStatus(
     publicId: string,
-    assignment: AssignmentUpdateRequest,
+    assignment: AssignmentRequest,
   ): Observable<AssignmentResponse | undefined> {
     // Uncomment the line below when the backend is ready
     // return this.http.put<AssignmentResponse>(
@@ -188,7 +215,7 @@ export class EvaluationAssignmentService {
    * @param assignment The updated assignment data
    * @returns Observable of AssignmentResponse
    */
-  updateAssignment(publicId: string, assignment: AssignmentUpdateRequest): Observable<AssignmentResponse | undefined> {
+  updateAssignment(publicId: string, assignment: AssignmentRequest): Observable<AssignmentResponse | undefined> {
     // Uncomment the line below when the backend is ready
     // return this.http.put<AssignmentResponse>(
     //   `${this.baseUrl}/${publicId}`,
@@ -197,14 +224,14 @@ export class EvaluationAssignmentService {
 
     // Use mock data
     const updatedAssignment = this.mockAssignments.find((a) => a.publicId === publicId)
-    if (updatedAssignment) {
-      if (assignment.proposalPublicId) updatedAssignment.proposalId = assignment.proposalPublicId
-      if (assignment.evaluatorPublicId) updatedAssignment.evaluatorPublicId = assignment.evaluatorPublicId
-      if (assignment.rubricPublicId) updatedAssignment.rubricPublicId = assignment.rubricPublicId
-      if (assignment.dueDate) updatedAssignment.dueDate = assignment.dueDate.toISOString()
-      if (assignment.notes) updatedAssignment.notes = assignment.notes
-      // if (assignment.evaluationType) updatedAssignment.evaluationType = assignment.evaluationType
-    }
+    // if (updatedAssignment) {
+    //   if (assignment.proposalPublicId) updatedAssignment.proposalId = assignment.proposalPublicId
+    //   if (assignment.evaluatorPublicId) updatedAssignment.evaluatorPublicId = assignment.evaluatorPublicId
+    //   if (assignment.rubricPublicId) updatedAssignment.rubricPublicId = assignment.rubricPublicId
+    //   if (assignment.dueDate) updatedAssignment.dueDate = assignment.dueDate.toISOString()
+    //   if (assignment.notes) updatedAssignment.notes = assignment.notes
+    //   // if (assignment.evaluationType) updatedAssignment.evaluationType = assignment.evaluationType
+    // }
     return of(updatedAssignment).pipe(delay(700)) // Simulate network delay
   }
 
@@ -244,8 +271,9 @@ export class EvaluationAssignmentService {
     // return this.http.get<AssignmentResponse[]>(`${this.baseUrl}/evaluator/${evaluatorId}`);
 
     // Use mock data
-    const assignments = this.mockAssignments.filter((a) => a.evaluatorPublicId === evaluatorId)
-    return of(assignments).pipe(delay(500)) // Simulate network delay
+    const assignments = this.mockAssignments.filter(
+      (a) => a.evaluator.publicId === evaluatorId
+    );    return of(assignments).pipe(delay(500)) // Simulate network delay
   }
 
   /**
@@ -258,8 +286,9 @@ export class EvaluationAssignmentService {
     // return this.http.get<AssignmentResponse[]>(`${this.baseUrl}/proposal/${proposalId}`);
 
     // Use mock data
-    const assignments = this.mockAssignments.filter((a) => a.proposalId === proposalId)
-    return of(assignments).pipe(delay(500)) // Simulate network delay
+    const assignments = this.mockAssignments.filter(
+      (a) => a.proposal.publicId === proposalId
+    );    return of(assignments).pipe(delay(500)) // Simulate network delay
   }
 
   /**
@@ -270,59 +299,7 @@ export class EvaluationAssignmentService {
   createAssignment(assignment: AssignmentRequest): Observable<AssignmentResponse | undefined> {
     // Uncomment the line below when the backend is ready
     // return this.http.post<AssignmentResponse>(this.baseUrl, assignment);
-
-    // Use mock data
-    const newId = this.mockAssignments.length + 1
-    const newPublicId = `assignment-${newId}`
-
-    // Find proposal title based on ID (in a real app, this would come from the backend)
-    const proposalTitles: { [key: string]: string } = {
-      "proposal-1": "Research Grant Proposal",
-      "proposal-2": "Technology Innovation Project",
-      "proposal-3": "Community Development Initiative",
-      "proposal-4": "Educational Program Expansion",
-      "proposal-5": "Healthcare Improvement Proposal",
-    }
-
-    // Find evaluator name based on ID (in a real app, this would come from the backend)
-    const evaluatorNames: { [key: string]: string } = {
-      "evaluator-1": "Dr. Jane Smith",
-      "evaluator-2": "Prof. John Davis",
-      "evaluator-3": "Dr. Sarah Johnson",
-      "evaluator-4": "Dr. Michael Brown",
-      "evaluator-5": "Prof. Emily Wilson",
-    }
-
-    // Find rubric name based on ID (in a real app, this would come from the backend)
-    const rubricNames: { [key: string]: string } = {
-      "rubric-1": "Research Grant Evaluation",
-      "rubric-2": "Technology Innovation Evaluation",
-      "rubric-3": "Community Impact Assessment",
-      "rubric-4": "Educational Program Evaluation",
-      "rubric-5": "Healthcare Initiative Assessment",
-    }
-
-    const newAssignment: AssignmentResponse = {
-      id: newId,
-      publicId: newPublicId,
-      proposalId: assignment.proposalPublicId,
-      proposalTitle: proposalTitles[assignment.proposalPublicId] || "Unknown Proposal",
-      evaluatorPublicId: assignment.evaluatorPublicId,
-      evaluatorName: evaluatorNames[assignment.evaluatorPublicId] || "Unknown Evaluator",
-      rubricPublicId: assignment.rubricPublicId,
-      rubricName: rubricNames[assignment.rubricPublicId] || "Unknown Rubric",
-      status: "NOT_STARTED",
-      totalScore: 0,
-      assignedDate: new Date().toISOString(),
-      dueDate: assignment.dueDate ? new Date(assignment.dueDate).toISOString() : undefined,
-      completedDate: "",
-      notes: assignment.notes || "",
-      // evaluationType: assignment.evaluationType || "DOCUMENT_REVIEW",
-      scores: [],
-    }
-
-    this.mockAssignments.push(newAssignment)
-    return of(newAssignment).pipe(delay(800)) // Simulate network delay
+    return of(this.mockAssignments[0]).pipe(delay(800)) 
   }
 
   /**
@@ -342,10 +319,10 @@ export class EvaluationAssignmentService {
     const completionRate = totalAssignments > 0 ? (completedAssignments / totalAssignments) * 100 : 0
 
     // Count unique evaluators
-    const uniqueEvaluators = new Set(this.mockAssignments.map((a) => a.evaluatorPublicId)).size
+    const uniqueEvaluators = new Set(this.mockAssignments.map((a) => a.evaluator.id)).size
 
     // Count unique proposals
-    const uniqueProposals = new Set(this.mockAssignments.map((a) => a.proposalId)).size
+    const uniqueProposals = new Set(this.mockAssignments.map((a) => a.proposal.id)).size
 
     // Calculate average score for completed assignments
     const completedScores = this.mockAssignments.filter((a) => a.status === "COMPLETED").map((a) => a.totalScore)

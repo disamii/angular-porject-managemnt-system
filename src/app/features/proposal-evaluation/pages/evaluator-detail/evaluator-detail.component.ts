@@ -107,10 +107,9 @@ export class EvaluatorDetailComponent implements OnInit, OnDestroy {
         mode: "edit",
         evaluator: {
           id: this.evaluator.publicId,
-          name: this.evaluator.evaluator.name,
-          email: this.evaluator.evaluator.email,
-          organization: this.evaluator.evaluator.academicDegreeLevel,
           type: this.evaluator.type,
+          evaluator: this.evaluator.evaluator,
+          maxAssignments: this.evaluator.maxAssignments,
           expertise: this.evaluator.expertise,
         },
       },
@@ -166,27 +165,15 @@ export class EvaluatorDetailComponent implements OnInit, OnDestroy {
     })
   }
 
-  getStatusColor(status: string): string {
-    switch (status) {
-      case "COMPLETED":
-        return "green"
-      case "IN_PROGRESS":
-        return "orange"
-      case "NOT_STARTED":
-        return "gray"
-      default:
-        return "gray"
-    }
-  }
+
 
   getTypeLabel(type: string): string {
     switch (type) {
-      case "INTERNAL":
-        return "Internal"
-      case "EXTERNAL":
-        return "External"
-      case "SUBJECT_MATTER_EXPERT":
-        return "Subject Matter Expert"
+      case "DOCUMENT_REVIEWER":
+        return "Document Reviewer"
+        case "PRESENTATION_REVIEWER":
+          return "Presentation Reviewer"
+      
       default:
         return type
     }
@@ -194,12 +181,10 @@ export class EvaluatorDetailComponent implements OnInit, OnDestroy {
 
   getTypeColor(type: string): string {
     switch (type) {
-      case "INTERNAL":
+      case "DOCUMENT_REVIEWER":
         return "primary"
-      case "EXTERNAL":
+      case "PRESENTATION_REVIEWER":
         return "accent"
-      case "SUBJECT_MATTER_EXPERT":
-        return "warn"
       default:
         return ""
     }

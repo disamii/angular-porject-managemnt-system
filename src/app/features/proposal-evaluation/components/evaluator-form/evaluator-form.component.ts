@@ -12,6 +12,7 @@ import { COMMA, ENTER } from "@angular/cdk/keycodes"
 import type { MatChipInputEvent } from "@angular/material/chips"
 import type { EvaluatorRequest } from "../../models/evaluator.model"
 import { PersonService } from "../../services/person.service"
+import { Person } from "../../models/person.model"
 
 @Component({
   selector: "app-evaluator-form",
@@ -115,7 +116,7 @@ export class EvaluatorFormComponent implements OnInit {
   @Output() cancel = new EventEmitter<void>()
 
   evaluatorForm!: FormGroup
-  users: any[] = []  // List of users
+  users: Person[] = []  // List of users
   readonly separatorKeysCodes = [ENTER, COMMA] as const
   evaluatorTypes= [
     { value: "DOCUMENT_REVIEWER", label: "Document Reviewer" },
@@ -133,13 +134,14 @@ export class EvaluatorFormComponent implements OnInit {
 
     // Fetch users list to populate user selection
     this.userService.getPeople().subscribe(users => {
+      console.log('Fetched users:', users)
+
       this.users = users
     })
   }
 
   private initForm(): void {
     this.evaluatorForm = this.fb.group({
-      evaluatorName: ["", Validators.required],
       userId: [null, Validators.required],
       maxAssignments: [1, [Validators.required, Validators.min(1)]],
       expertise: [[], Validators.required],
@@ -150,7 +152,6 @@ export class EvaluatorFormComponent implements OnInit {
   private patchForm(): void {
     if (this.evaluator) {
       this.evaluatorForm.patchValue({
-        evaluatorName: this.evaluator.evaluatorName,
         userId: this.evaluator.userId,
         expertise:this.evaluator.expertise,
         maxAssignments: this.evaluator.maxAssignments,

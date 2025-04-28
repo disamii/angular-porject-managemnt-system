@@ -15,20 +15,14 @@ export interface EvaluatorBase {
   expertise: string;
   maxAssignments: number;
   type: "DOCUMENT_REVIEWER" | "PRESENTATION_REVIEWER";
-  evaluatorName: string; 
 }
 
 export interface EvaluatorRequest extends EvaluatorBase {
-
   userId: number;  // Reference to an existing user by their ID
 }
 
 export interface EvaluatorResponse extends EvaluatorBase {
-  id: number;
-  publicId: string;
-  evaluator: UserInfo; 
-  createdAt: Date;
-  updatedAt: Date;
-  assignmentCount: number;
-  completedAssignmentCount: number;
+id:number;
+publicId:string;
+evaluator: UserInfo; 
 }

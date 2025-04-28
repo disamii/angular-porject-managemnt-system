@@ -5,16 +5,18 @@
     <div mat-dialog-content class="space-y-4">
 
 
-      <mat-form-field appearance="fill" class="w-full" *ngIf="!data.isEdit">
-        <mat-label>User ID</mat-label>
-        <input matInput type="number" formControlName="userId" placeholder="Enter user ID">
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>User</mat-label>
+        <mat-select formControlName="userId">
+          <mat-option *ngFor="let user of users" [value]="user.id">
+            {{ user.firstName }} {{ user.lastName }}
+          </mat-option>
+        </mat-select>
         <mat-error *ngIf="evaluatorForm.get('userId')?.hasError('required')">
-          User ID is required
-        </mat-error>
-        <mat-error *ngIf="evaluatorForm.get('userId')?.hasError('min')">
-          User ID must be a positive number
+          User is required
         </mat-error>
       </mat-form-field>
+
 
       <mat-form-field appearance="fill" class="w-full">
         <mat-label>Expertise</mat-label>
@@ -53,16 +55,7 @@
             Evaluator type is required
           </mat-error>
         </mat-form-field>
-      </div>
-
-      <div *ngIf="data.isEdit" class="flex items-center mt-4">
-        <mat-slide-toggle formControlName="isActive" color="primary">
-          Active
-        </mat-slide-toggle>
-        <span class="ml-2 text-sm text-slate-600">
-          Inactive evaluators cannot be assigned to new proposals
-        </span>
-      </div>
+      </div>  
     </div>
 
     <div mat-dialog-actions class="flex justify-end gap-3 mt-6">

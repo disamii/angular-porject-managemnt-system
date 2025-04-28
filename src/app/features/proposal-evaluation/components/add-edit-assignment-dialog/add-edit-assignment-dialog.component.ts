@@ -118,8 +118,8 @@ export class AddEditAssignmentDialogComponent implements OnInit {
     if (this.data?.assignment && this.assignmentForm) {
       this.assignmentForm.patchValue({
         proposalPublicId: "proposal-1", // This would come from the actual assignment
-        evaluatorPublicId: this.data.assignment.evaluatorPublicId || "",
-        rubricPublicId: this.data.assignment.rubricPublicId || "",
+        evaluatorPublicId: this.data.assignment.evaluator.publicId || "",
+        rubricPublicId: this.data.assignment.rubric.id || "",
         dueDate: this.data.assignment.dueDate ? new Date(this.data.assignment.dueDate) : new Date(),
         notes: this.data.assignment.notes || "",
       })

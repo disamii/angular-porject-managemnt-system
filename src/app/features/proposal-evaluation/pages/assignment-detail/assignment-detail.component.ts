@@ -17,7 +17,7 @@ import { MatDialogModule,  MatDialog } from "@angular/material/dialog"
 import { MatExpansionModule } from "@angular/material/expansion"
 import { MatTableModule } from "@angular/material/table"
 
-import  { AssignmentResponse, AssignmentUpdateRequest } from "../../models/assignment.model"
+import  { AssignmentResponse, AssignmentRequest } from "../../models/assignment.model"
 import { ConfirmDialogComponent } from "../../../../components/confirm-dialog/confirm-dialog.component"
 import  { EvaluationAssignmentService } from "../../services/evaluation-assignment.service"
 import  { NotificationService } from "../../services/notification.service"
@@ -113,7 +113,7 @@ export class AssignmentDetailComponent implements OnInit {
     }
 
     if (this.feedbackForm?.value) {
-      const updateRequest: AssignmentUpdateRequest = {
+      const updateRequest: AssignmentRequest = {
         status: this.feedbackForm.value.status,
         feedback: this.feedbackForm.value.feedback,
       }

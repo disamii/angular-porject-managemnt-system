@@ -144,7 +144,7 @@ export class AssignmentManagementComponent implements OnInit {
       width: "400px",
       data: {
         title: "Delete Assignment",
-        message: `Are you sure you want to delete the assignment for ${assignment.proposalTitle}?`,
+        message: `Are you sure you want to delete the assignment for ${assignment.proposal.title}?`,
         confirmText: "Delete",
         cancelText: "Cancel",
         confirmColor: "warn",
