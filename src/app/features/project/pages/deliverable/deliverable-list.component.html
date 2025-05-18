@@ -41,65 +41,88 @@
 
   <!-- Deliverables list -->
   <div class="space-y-6" *ngIf="!loading && !error && deliverables.length > 0">
-    <mat-card *ngFor="let deliverable of deliverables" class="overflow-hidden border-0 shadow-md hover:shadow-lg transition-all">
-      <div class="h-2 w-full bg-gradient-to-r from-purple-500 to-indigo-500"></div>
-      <mat-card-content class="p-6">
-        <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
-          <div>
-            <h3 class="font-bold text-xl">{{ deliverable.name }}</h3>
-            <p class="text-slate-600 text-sm">{{ deliverable.description }}</p>
-          </div>
 
-          <div class="flex items-center gap-3">
-            <mat-chip 
-              [class]="deliverable.reviewed ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'"
-              (click)="toggleReviewStatus(deliverable)"
-              matTooltip="Click to toggle review status"
-              class="cursor-pointer"
-            >
-              <mat-icon class="h-4 w-4 mr-1">{{ deliverable.reviewed ? 'check_circle' : 'pending' }}</mat-icon>
-              {{ deliverable.reviewed ? 'Reviewed' : 'Not Reviewed' }}
-            </mat-chip>
-          </div>
+<!-- Deliverables list -->
+<div class="space-y-6" *ngIf="!loading && !error && deliverables.length > 0">
+  <mat-card *ngFor="let deliverable of deliverables" class="overflow-hidden border-0 shadow-md hover:shadow-lg transition-all">
+    <div class="h-2 w-full bg-gradient-to-r from-purple-500 to-indigo-500"></div>
+    <mat-card-content class="p-6">
+      <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
+        <div>
+          <h3 class="font-bold text-xl">{{ deliverable.name }}</h3>
+          <p class="text-slate-600 text-sm">{{ deliverable.description }}</p>
         </div>
 
-        <div class="flex flex-wrap items-center justify-between gap-4 pt-4 border-t">
-          <div class="flex flex-wrap gap-2">
-            <button mat-stroked-button class="gap-1" (click)="openEditDeliverableModal(deliverable)">
-              <mat-icon>edit</mat-icon>
-              Edit
-            </button>
-            
-            <input 
-              type="file" 
-              #fileInput 
-              style="display: none" 
-              multiple 
-              (change)="onFileSelected($event, deliverable.id)" 
-            />
-            
-            <button mat-stroked-button class="gap-1" (click)="triggerFileInput(fileInput)">
-              <mat-icon>attach_file</mat-icon>
-              Upload Attachments
-            </button>
-            
-            <button mat-stroked-button class="gap-1" (click)="downloadDeliverable(deliverable.id.toString())">
-              <mat-icon>download</mat-icon>
-              Download
-            </button>
-          </div>
-
-          <button 
-            mat-stroked-button 
-            color="warn" 
-            class="gap-1" 
-            (click)="confirmDeleteDeliverable(deliverable.id)"
+        <div class="flex items-center gap-3">
+          <mat-chip 
+            [class]="deliverable.reviewed ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'"
+            (click)="toggleReviewStatus(deliverable)"
+            matTooltip="Click to toggle review status"
+            class="cursor-pointer"
           >
-            <mat-icon>delete</mat-icon>
-            Delete
+            <mat-icon class="h-4 w-4 mr-1">{{ deliverable.reviewed ? 'check_circle' : 'pending' }}</mat-icon>
+            {{ deliverable.reviewed ? 'Reviewed' : 'Not Reviewed' }}
+          </mat-chip>
+
+          <!-- Menu trigger -->
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="More actions">
+            <mat-icon>more_vert</mat-icon>
           </button>
+
+          <!-- Menu content -->
+
+
+        <mat-menu #menu="matMenu" class="custom-menu bg-emerald-100  ">
+  <button mat-menu-item (click)="viewDeliverableDetails(deliverable.milestone.id, deliverable.id)">
+    <mat-icon>visibility</mat-icon>
+    <span>View Details</span>
+  </button>
+  
+  <mat-divider></mat-divider> <!-- Divider between items -->
+
+  <button mat-menu-item (click)="openEditDeliverableModal(deliverable)">
+    <mat-icon>edit</mat-icon>
+    <span>Edit</span>
+  </button>
+
+  <mat-divider></mat-divider>
+
+  <button mat-menu-item (click)="triggerFileInput(fileInput)">
+    <mat-icon>attach_file</mat-icon>
+    <span>Upload Attachments</span>
+  </button>
+
+  <mat-divider></mat-divider>
+
+  <button mat-menu-item (click)="downloadDeliverable(deliverable.publicId)">
+    <mat-icon>download</mat-icon>
+    <span>Download</span>
+  </button>
+
+  <mat-divider></mat-divider>
+
+  <button mat-menu-item (click)="confirmDeleteDeliverable(deliverable.id)">
+    <mat-icon>delete</mat-icon>
+    <span>Delete</span>
+  </button>
+</mat-menu>
+
+
+
+          <!-- Hidden file input -->
+          <input 
+            type="file" 
+            #fileInput 
+            style="display: none" 
+            multiple 
+            (change)="onFileSelected($event, deliverable.id)" 
+          />
         </div>
-      </mat-card-content>
-    </mat-card>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+
   </div>
 </div>

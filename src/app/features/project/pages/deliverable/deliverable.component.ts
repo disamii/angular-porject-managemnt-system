@@ -1,5 +1,4 @@
 import { Component, type OnInit } from "@angular/core"
-import  { Deliverable } from "../../models/deliverable.model"
 import  { DeliverableService } from "../../services/deliverable.service"
 import { CommonModule } from "@angular/common"
 import { MatCardModule } from "@angular/material/card"
@@ -9,10 +8,13 @@ import { MatChipsModule } from "@angular/material/chips"
 import { MatProgressBarModule } from "@angular/material/progress-bar"
 import { MatTooltipModule } from "@angular/material/tooltip"
 import { MatSnackBarModule, MatSnackBar } from "@angular/material/snack-bar"
-import {  ActivatedRoute, RouterModule } from "@angular/router"
+import {  ActivatedRoute, Router, RouterModule } from "@angular/router"
 import  { MatDialog } from "@angular/material/dialog"
 import { MilestoneDeliverableFormComponent } from "../../components/milestone-deliverable/milestone-deliverable-form.component"
 import { ConfirmDialogComponent } from "../../../../components/confirm-dialog/confirm-dialog.component"
+import { DeliverableResponse } from "../../models/deliverable.model"
+import { MatMenu, MatMenuTrigger } from "@angular/material/menu"
+import { MatDividerModule } from "@angular/material/divider"
 
 @Component({
   selector: "app-deliverable-list",
@@ -28,10 +30,13 @@ import { ConfirmDialogComponent } from "../../../../components/confirm-dialog/co
     MatProgressBarModule,
     MatTooltipModule,
     MatSnackBarModule,
+    MatMenuTrigger,
+    MatMenu,
+    MatDividerModule
   ],
 })
 export class DeliverableListComponent implements OnInit {
-  deliverables: Deliverable[] = []
+  deliverables: DeliverableResponse[] = []
   milestoneId = 0
   loading = false
   error = false
@@ -41,6 +46,7 @@ export class DeliverableListComponent implements OnInit {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private route: ActivatedRoute,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -83,7 +89,10 @@ export class DeliverableListComponent implements OnInit {
     })
   }
 
-  openEditDeliverableModal(deliverable: Deliverable): void {
+   viewDeliverableDetails(milestoneId:number,deliverableId:number){
+    this.router.navigate(["/milestones", milestoneId, "deliverables", deliverableId])
+   }
+  openEditDeliverableModal(deliverable: DeliverableResponse): void {
     const dialogRef = this.dialog.open(MilestoneDeliverableFormComponent, {
       width: "600px",
       data: {
@@ -155,7 +164,7 @@ export class DeliverableListComponent implements OnInit {
     })
   }
 
-  toggleReviewStatus(deliverable: Deliverable): void {
+  toggleReviewStatus(deliverable: DeliverableResponse): void {
     const newStatus = !deliverable.reviewed
     this.loading = true
     this.deliverableService.updateReviewStatus(this.milestoneId, deliverable.id, newStatus).subscribe({

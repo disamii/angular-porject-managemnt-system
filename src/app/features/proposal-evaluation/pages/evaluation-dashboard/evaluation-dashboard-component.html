@@ -124,7 +124,7 @@
             <div class="space-y-4">
               <div *ngFor="let assignment of assignments.slice(0, 3)">
                 <div class="flex items-center justify-between text-sm">
-                  <span>{{ assignment.proposalTitle }}</span>
+                  <span>{{ assignment.proposal.title }}</span>
                   <span class="font-medium">
                     {{ assignment.status === 'COMPLETED' ? '100%' : 
                        assignment.status === 'IN_PROGRESS' ? '60%' : '0%' }}

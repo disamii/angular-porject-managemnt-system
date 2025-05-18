@@ -174,8 +174,17 @@ export class MilestoneService {
   // getMilestones(projectId: number): Observable<Milestone[]> {
   //   return this.http.get<Milestone[]>(`${this.baseUrl}/${projectId}/milestones`);
   // }
+  
+  updateMilestoneStatus(
+    projectId: number,
+    milestoneId: number,
+    status: 'NOT_STARTED' | 'COMPLETED' | 'IN_PROGRESS'
+  ): Observable<Milestone> {
+    const url = `/api/v1/projects/${projectId}/milestones/${milestoneId}/status`;
+    return this.http.patch<Milestone>(url, { status });
+  }
+  
   getMilestones(projectId: number): Observable<Milestone[]> {
-
     return of(this.milestones.filter(milestone => milestone.researchProject.id === projectId));
   }
 
@@ -183,4 +192,6 @@ export class MilestoneService {
   createMilestone(projectId: number, milestone: Milestone): Observable<Milestone> {
     return this.http.post<Milestone>(`${this.baseUrl}/${projectId}/milestones`, milestone);
   }
+
+
 }

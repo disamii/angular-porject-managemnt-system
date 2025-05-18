@@ -1,0 +1,53 @@
+<div class="container mx-auto px-4 py-8">
+    <!-- Header and navigation -->
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-3xl font-bold">Deliverable Detail</h1>
+        <p class="text-slate-600">Full information about the selected deliverable.</p>
+      </div>
+      <button mat-stroked-button color="primary" (click)="navigateToDeliverableList()">
+        <mat-icon>arrow_back</mat-icon>
+        Back to List
+      </button>
+    </div>
+    <!-- Loading Spinner -->
+    <div *ngIf="loading" class="flex justify-center my-8">
+      <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="bg-red-100 text-red-700 p-4 rounded mb-4">
+      {{ error }}
+    </div>
+  
+    <!-- Deliverable Detail -->
+    <mat-card *ngIf="deliverable" class="p-6 shadow-md">
+      <mat-card-title class="text-2xl font-semibold mb-2">{{ deliverable.name }}</mat-card-title>
+      <mat-card-subtitle class="mb-4 text-slate-500">{{ deliverable.publicId }}</mat-card-subtitle>
+      <p class="mb-4"><strong>Description:</strong> {{ deliverable.description }}</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <p><strong>Status:</strong> {{ deliverable.reviewStatus }}</p>
+        <p><strong>Reviewed:</strong> {{ deliverable.reviewed ? 'Yes' : 'No' }}</p>
+        <p><strong>Due Date:</strong> {{ deliverable.dueDate | date }}</p>
+        <p><strong>Submission Date:</strong> {{ deliverable.submissionDate | date }}</p>
+      </div>
+      <p class="mb-4"><strong>Review Comments:</strong> {{ deliverable.reviewComments || 'No comments' }}</p>
+      <p class="mb-4">
+        <strong>Milestone:</strong> {{ deliverable.milestone.name || 'N/A' }}
+        <span class="ml-2 text-sm text-slate-500">[{{ deliverable.milestone.status }}]</span>
+      </p>
+  
+      <!-- Actions -->
+      <div class="flex gap-4 mt-6">
+        <button mat-raised-button color="primary" (click)="openEditDeliverableModal(deliverable)">
+          <mat-icon class="mr-1">edit</mat-icon>
+          Edit
+        </button>
+        <button mat-raised-button color="warn" (click)="deleteDeliverable()">
+          <mat-icon class="mr-1">delete</mat-icon>
+          Delete
+        </button>
+      </div>
+    </mat-card>
+  </div>
+  

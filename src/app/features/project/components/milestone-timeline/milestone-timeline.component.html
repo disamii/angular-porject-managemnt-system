@@ -26,7 +26,7 @@
             *ngIf="milestone.status !== 'COMPLETED'"
             mat-stroked-button
             color="primary"
-            (click)="handleStatusChange(milestone.id, 'COMPLETED')"
+            (click)="handleStatusChange(milestone.researchProject.id,milestone.id,'COMPLETED')"
           >
             Mark as Completed
           </button>
@@ -34,7 +34,7 @@
           <button
             *ngIf="milestone.status === 'NOT_STARTED'"
             mat-stroked-button
-            (click)="handleStatusChange(milestone.id, 'IN_PROGRESS')"
+            (click)="handleStatusChange(milestone.researchProject.id,milestone.id, 'IN_PROGRESS')"
           >
             Start Milestone
           </button>

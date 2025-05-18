@@ -4,11 +4,24 @@ export interface Milestone {
     status: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
   }
   
-  export interface Deliverable {
+  export interface DeliverableRequest {
     id: number;
     name: string;
     description: string;
-    milestone: Milestone;
+    milestoneId: number;
     reviewed: boolean;
+  }
+  
+  export interface DeliverableResponse {
+    id: number;
+    publicId: string;
+    name: string;
+    description: string;
+    reviewStatus: 'PENDING_REVIEW' | 'APPROVED' | 'REJECTED'; 
+    reviewComments: string;
+    dueDate: string; 
+    submissionDate: string; 
+    reviewed: boolean;
+    milestone: Milestone;
   }
   

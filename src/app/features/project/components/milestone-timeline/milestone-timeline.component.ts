@@ -10,6 +10,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
+import { MilestoneService } from '../../services/milestone.service';
 
 @Component({
   selector: 'app-milestone-timeline',
@@ -34,7 +35,10 @@ export class MilestoneTimelineComponent implements OnInit {
   selectedMilestone: Milestone | null = null;
   approvalForm!: FormGroup;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder,
+    private milestonSerivce:MilestoneService
+
+  ) {}
 
   ngOnInit(): void {
     this.approvalForm = this.fb.group({
@@ -75,7 +79,11 @@ export class MilestoneTimelineComponent implements OnInit {
     }
   }
 
-  handleStatusChange(id: number, newStatus: 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED'): void {
+
+  handleStatusChange(projectId:number,id: number, newStatus: 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED'): void {
+    
+  this.milestonSerivce.updateMilestoneStatus(projectId,id,newStatus)
+
     this.milestones = this.milestones.map((m) =>
       m.id === id ? { ...m, status: newStatus } : m
     );
@@ -94,7 +102,6 @@ export class MilestoneTimelineComponent implements OnInit {
   handleApproval(id: number, approve: boolean): void {
     if (this.approvalForm.valid) {
       const note = this.approvalForm.get('note')?.value;
-      console.log({ milestoneId: id, approve, note });
       this.closeApprovalDialog();
     }
   }

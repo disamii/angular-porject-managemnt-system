@@ -1,5 +1,4 @@
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { Deliverable } from "../../models/deliverable.model";
 import { OnInit, Input, Inject, Component } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 import { DeliverableService } from "../../services/deliverable.service";
@@ -11,6 +10,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
+import { DeliverableRequest } from "../../models/deliverable.model";
 
 @Component({
   selector: 'app-milestone-deliverable-form',
@@ -36,10 +36,10 @@ export class MilestoneDeliverableFormComponent implements OnInit {
   isSubmitting = false;
   isModalOpen = true;
   isEditing = false;
-  deliverableToEdit: Deliverable | null = null;
+  deliverableToEdit: DeliverableRequest | null = null;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { milestoneId: number; deliverable?: Deliverable; isEditing?: boolean },
+    @Inject(MAT_DIALOG_DATA) public data: { milestoneId: number; deliverable?: DeliverableRequest; isEditing?: boolean },
     private dialogRef: MatDialogRef<MilestoneDeliverableFormComponent>,
     private fb: FormBuilder,
     private deliverableService: DeliverableService
@@ -49,7 +49,6 @@ export class MilestoneDeliverableFormComponent implements OnInit {
     this.isEditing = !!this.data.isEditing;
     this.deliverableToEdit = this.data.deliverable || null;
     this.milestoneId = this.data.milestoneId;
-
     this.deliverableForm = this.fb.group({
       name: [this.deliverableToEdit?.name || '', Validators.required],
       description: [this.deliverableToEdit?.description || '', Validators.required],
@@ -62,16 +61,12 @@ export class MilestoneDeliverableFormComponent implements OnInit {
 
     this.isSubmitting = true;
 
-    const deliverable: Deliverable = {
+    const deliverable: DeliverableRequest = {
       id: this.deliverableToEdit?.id || 0,
       name: this.deliverableForm.value.name,
       description: this.deliverableForm.value.description,
       reviewed: this.deliverableForm.value.reviewed,
-      milestone: {
-        id: this.milestoneId,
-        name: this.deliverableToEdit?.milestone?.name || '',
-        status: this.deliverableToEdit?.milestone?.status || 'NOT_STARTED',
-      },
+      milestoneId: this.milestoneId,
     };
 
     // const request$ = this.isEditing
@@ -83,7 +78,6 @@ export class MilestoneDeliverableFormComponent implements OnInit {
       next: () => {
         this.isSubmitting = false;
         this.deliverableForm.reset();
-        alert(this.isEditing ? 'Deliverable updated successfully!' : 'Deliverable created successfully!');
         this.dialogRef.close('refresh');
       },
       error: (err) => {
