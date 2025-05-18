@@ -22,8 +22,8 @@ Thumbs.db
 /yarn.lock
 
 # Environment files
-/src/environments/environment.prod.ts
-/src/environments/environment.ts
+# /src/environments/environment.prod.ts
+# /src/environments/environment.ts
 
 # Logs
 npm-debug.log*
